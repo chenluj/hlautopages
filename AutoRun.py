@@ -6,6 +6,9 @@ import time
 from xlrd import open_workbook
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.common.exceptions import TimeoutException
 
 
 CONFIG = 'config.yaml'
@@ -137,47 +140,61 @@ class Browser:
             profile = webdriver.FirefoxProfile()
             profile.set_preference('webdriver.firefox.bin', self.location)
             self.driver = webdriver.Firefox(firefox_profile=profile)
+            print u'[info] 打开浏览器  firefox'
             return self
         elif self.browser == 'chrome':
-            option = webdriver.ChromeOptions()
-            option.binary_location = self.location
-            self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
+            # option = webdriver.ChromeOptions()
+            # option.binary_location = self.location
+            self.driver = webdriver.Chrome(executable_path='chromedriver.exe')
+            print u'[info] 打开浏览器  chrome'
             return self
         else:
-            print u'不支持的浏览器类型'
+            print u'[error] 不支持的浏览器类型'
 
     def get(self, url):
         self.driver.get(url)
+        print u'[info] 打开URL  {}'.format(url)
         return self.driver
 
     def close(self):
         self.driver.close()
+        print u'[info] 关闭浏览器'
 
 
 class Element:
     def __init__(self, driver, elem_info, params):
-        self.element = driver.find_element(by=elem_info[0], value=elem_info[1])
-        self.action = elem_info[2].lower()
-        self.element_name = elem_info[3]
-        self.params = params
+        try:
+            locator = (elem_info[0], elem_info[1])
+            self.element = WebDriverWait(driver, 15, 0.5).until(presence_of_element_located(locator))
+            self.action = elem_info[2].lower()
+            self.element_name = elem_info[3]
+            self.params = params
+            print u'[info] 元素已找到  ',
+            print elem_info
+        except TimeoutException:
+            print u'[error] 未找到元素  ',
+            print elem_info
 
     def do_its_work(self, delay_submit):
-        if self.action == 'click':
-            self.element.click()
-        elif self.action == 'clear':
-            self.element.clear()
-        elif self.action == 'submit':
-            time.sleep(delay_submit)
-            self.element.submit()
-        elif self.action == 'sendkeys':
-            self.element.send_keys(self.pick_value())
-        elif self.action == 'select':
-            Select(self.element).select_by_value(self.pick_value())
-        else:
-            print u"Unsupported action: {}.".format(self.action)
+        if self.element:
+            if self.action == 'click':
+                self.element.click()
+            elif self.action == 'clear':
+                self.element.clear()
+            elif self.action == 'submit':
+                time.sleep(delay_submit)
+                self.element.submit()
+            elif self.action == 'sendkeys':
+                self.element.send_keys(self.pick_value())
+            elif self.action == 'select':
+                Select(self.element).select_by_value(self.pick_value())
+            else:
+                print u"[error] 不支持的action {}".format(self.action)
 
     def pick_value(self):
-        return self.params[self.element_name]
+        value = self.params[self.element_name]
+        print u'[info] 从Excel中取得值 {}'.format(value)
+        return value
 
 
 class Task:
@@ -201,21 +218,24 @@ class Task:
                     Element(driver, element, params).do_its_work(b.delay_submit)
                     time.sleep(1)
                 time.sleep(5)
-            driver.close()
-            print u'======  任务结束  ======'
+            b.close()
+            print u'======  任务结束  ======='
             print
 
 
 def main():
     tasks = YamlReader().data
     conf = Config(tasks.pop(0))
-    print conf.browser, conf.location, conf.delay_submit
+    # print conf.browser, conf.location, conf.delay_submit
 
     browser = Browser(conf)
 
     for task in tasks:
+        print u'[info] 执行任务  ',
         print task
         Task(task).run(browser)
+
+    print u'[info] 所有任务执行结束，请处理数据后重新启动程序'
 
 
 if __name__ == '__main__':

@@ -1,51 +1,52 @@
-
 # 此文件为页面的配置文件，所有需要填写的标签的标签类型与定位方式均按指定格式编写
 #
-# 定位方式可选：
-# "id"
-# "xpath"
-# "link text"
-# "partial link text"
-# "name"
-# "tag name"
-# "class name"
-# "css selector"
+# 定位方式可选以下8种，推荐用id：
+# "id"    "xpath"     "link text"   "partial link text"
+# "name"  "tag name"  "class name"  "css selector"
+#
+# 操作指令可选以下5种：
+# select    sendkeys    click   clear   submit
+
 
 ---
 # 配置节，必须为第一节！
 browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
-location: C:\APP\Firefox\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
+location: C:\APP\Firefox\firefox.exe  # 浏览器位置，不写这项配置则为默认路径 todo: 设置浏览器位置？？
 
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 
 ---
 # 接下来的均为任务节
 - url: http://www.holidayloans4u.com
-- sheet: cashadvance
+- sheet: holidayloans4u
 
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
-    - ['id', 'amount', select, select_1]
-    - ['id', 'zip', sendkeys, input_1]
-    - ['id', 'firstName', sendkeys, input_2]
-    - ['id', 'lastName', sendkeys, input_3]
-    - ['id', 'email', sendkeys, input_4]
-    - ['id', 'cta-submit', submit, submit_1]
+    - ['id', 'requested_amount', select, requested_amount]
+    - ['id', 'employment_status', select, employment_status]
+    - ['id', 'first_name', sendkeys, first_name]
+    - ['id', 'last_name', sendkeys, last_name]
+    - ['id', 'email', sendkeys, email]
+    - ['id', 'postal_code', sendkeys, postal_code]
+    - ['id', 'is_military', select, is_military]
+    - ['id', 'home_phone', sendkeys, home_phone]
+    - ['id', 'terms', click, terms]
+    - ['id', 'signature', click, signature]
+    - ['id', 'homesubmit', submit, homesubmit]
 
-- elements:
-    - ['id', 'city', sendkeys, input_5]
-    - ['id', 'address', sendkeys, input_6]
-    - ['id', 'lengthAtAddress', select, select_2]
-    - ['id', 'rentOwn', select, select_3]
-    - ['id', 'license', sendkeys, input_7]
-    - ['id', 'ownCar', select, select_4]
-    - ['id', 'phone', sendkeys, input_8]
-    - ['id', 'ownCar', select, select_5]
-    - ['id', 'ssn', sendkeys, input_9]
-    - ['id', 'ownCar', select, select_6]
+#- elements:
+#    - ['id', 'city', sendkeys, input_5]
+#    - ['id', 'address', sendkeys, input_6]
+#    - ['id', 'lengthAtAddress', select, select_2]
+#    - ['id', 'rentOwn', select, select_3]
+#    - ['id', 'license', sendkeys, input_7]
+#    - ['id', 'ownCar', select, select_4]
+#    - ['id', 'phone', sendkeys, input_8]
+#    - ['id', 'ownCar', select, select_5]
+#    - ['id', 'ssn', sendkeys, input_9]
+#    - ['id', 'ownCar', select, select_6]
 
----
-- url: http://www.cashadvance.xyz
-
-- elements: xxx
-
+#---
+#- url: http://www.cashadvance.xyz
+#
+#- elements: xxx
