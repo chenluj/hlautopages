@@ -1,0 +1,42 @@
+
+# 此文件为页面的配置文件，所有需要填写的标签的标签类型与定位方式均按指定格式编写
+#
+# 定位方式可选：
+# "id"
+# "xpath"
+# "link text"
+# "partial link text"
+# "name"
+# "tag name"
+# "class name"
+# "css selector"
+
+---
+- url: http://www.cashadvance.xyz
+
+# [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）, xxx]
+- elements:
+    - ['id', 'amount', select, select_1, '600']
+    - ['id', 'zip', sendkeys, input_1, '220110']
+    - ['id', 'firstName', sendkeys, input_2, 'Karl']
+    - ['id', 'lastName', sendkeys, input_3, 'James']
+    - ['id', 'email', sendkeys, input_4, 'James@karl.com']
+    - ['id', 'cta-submit', submit, submit_1]
+
+- elements:
+    - ['id', 'city', sendkeys, input_5, 'BeiJing']
+    - ['id', 'address', sendkeys, input_6, 'BeiJing XX Rd']
+    - ['id', 'lengthAtAddress', select, select_2, '2']
+    - ['id', 'rentOwn', select, select_3, 'rent']
+    - ['id', 'license', sendkeys, input_7, 'xxxxx']
+    - ['id', 'ownCar', select, select_4, 'yes']
+    - ['id', 'phone', sendkeys, input_8, '15222223333']
+    - ['id', 'ownCar', select, select_5, 'yes']
+    - ['id', 'ssn', sendkeys, input_9, '44444444']
+    - ['id', 'ownCar', select, select_6, 'yes']
+
+---
+- url: xxx
+
+- elements: xxx
+
