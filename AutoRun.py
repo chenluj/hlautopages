@@ -68,19 +68,10 @@ class ExcelReader(object):
 
     def _sheet(self):
         """Return sheet"""
-        if type(self.sheet_locator) not in [int, str]:
-            raise SheetTypeError('Please pass in <type \'int\'> or <type \'str\'>, not {0}'.format(type(self.sheet)))
-        elif type(self.sheet_locator) == int:
-            try:
-                sheet = self.book.sheet_by_index(self.sheet_locator)  # by index
-            except:
-                raise SheetError('Sheet \'{0}\' not exists.'.format(self.sheet_locator))
-        else:
-            try:
-                sheet = self.book.sheet_by_name(self.sheet_locator)  # by name
-            except:
-                raise SheetError('Sheet \'{0}\' not exists.'.format(self.sheet_locator))
-        return sheet
+        try:
+            return self.book.sheet_by_name(self.sheet_locator)  # by name
+        except:
+            raise SheetError('Sheet \'{0}\' not exists.'.format(self.sheet_locator))
 
     @property
     def title(self):
@@ -126,107 +117,108 @@ class YamlReader:
             return y
 
 
+class Config:
+    def __init__(self, conf):
+        self.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
+        self.location = conf['location'] if 'location' in conf else None
+        self.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
+
+
 class Browser:
 
-    def __init__(self):
+    def __init__(self, config):
         self.driver = None
-        # self.profile = webdriver.FirefoxProfile()
+        self.browser = config.browser
+        self.location = config.location
+        self.delay_submit = config.delay_submit
+
+    def open(self):
+        if self.browser == 'firefox':
+            profile = webdriver.FirefoxProfile()
+            profile.set_preference('webdriver.firefox.bin', self.location)
+            self.driver = webdriver.Firefox(firefox_profile=profile)
+            return self
+        elif self.browser == 'chrome':
+            option = webdriver.ChromeOptions()
+            option.binary_location = self.location
+            self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
+            return self
+        else:
+            print u'不支持的浏览器类型'
 
     def get(self, url):
-        self.driver = webdriver.Firefox()
         self.driver.get(url)
+        return self.driver
 
     def close(self):
         self.driver.close()
 
 
-class Page:
+class Element:
+    def __init__(self, driver, elem_info, params):
+        self.element = driver.find_element(by=elem_info[0], value=elem_info[1])
+        self.action = elem_info[2].lower()
+        self.element_name = elem_info[3]
+        self.params = params
 
-    def __init__(self, driver=None):
-        if driver:
-            self.driver = driver
+    def do_its_work(self, delay_submit):
+        if self.action == 'click':
+            self.element.click()
+        elif self.action == 'clear':
+            self.element.clear()
+        elif self.action == 'submit':
+            time.sleep(delay_submit)
+            self.element.submit()
+        elif self.action == 'sendkeys':
+            self.element.send_keys(self.pick_value())
+        elif self.action == 'select':
+            Select(self.element).select_by_value(self.pick_value())
         else:
-            self.driver = webdriver.Firefox()
+            print u"Unsupported action: {}.".format(self.action)
 
-        self.data = None
-
-    def get(self, url):
-        self.driver.get(url)
-
-    def element_work(self, work):
-        locate_way = work[0]
-        locate_expr = work[1]
-        action = work[2]
-        if len(work) > 4:
-            # TODO: 循环读取excel中数据并
-            param = work[4]
-            xls = ExcelReader().data[0][work[3]]
-            # print xls
-            param = xls
-
-        element = self.driver.find_element(by=locate_way, value=locate_expr)
-        time.sleep(1)
-
-        if action in ACTIONS:
-            if action == 'click':
-                element.click()
-                print u'元素点击'
-            elif action == 'clear':
-                element.clear()
-                print u'元素清空内容'
-            elif action == 'sendkeys':
-                element.send_keys(param)
-                print u'元素输入值  {}'.format(param)
-            elif action == 'submit':
-                element.submit()
-                print u'提交'
-            elif action == 'select':
-                Select(element).select_by_value(param)
-                print u'选择选项  {}'.format(param)
-        else:
-            print u"Unsupported action: {}.".format(action)
+    def pick_value(self):
+        return self.params[self.element_name]
 
 
-def main():
-    tasks = YamlReader().data
-    for task in tasks:
-        print u'======  任务开始  ======='
-        browser = Browser()
-        print u'打开浏览器'
-        try:
-            url = task.pop(0)['url']
-            browser.get(url)
-            print u'打开网页  {}'.format(url)
-        except:
-            raise
-            print u'task 第一项必须为url'
-        else:
-            p = Page(driver=browser.driver)
-            for page in task:
+class Task:
+    def __init__(self, task):
+        self.url = task.pop(0)['url']
+        self.sheet = task.pop(0)['sheet']
+        xls = ExcelReader(sheet=self.sheet)
+        self.loop_times = xls.nums
+        self.data = xls.data
+
+        self.task = task
+
+    def run(self, b):
+        for t in range(self.loop_times):
+            params = self.data[t]
+
+            print u'======  任务开始  ======='
+            driver = b.open().get(self.url)
+            for page in self.task:
                 for element in page['elements']:
-                    print u'定位元素  ',
-                    print element
-                    p.element_work(element)
+                    Element(driver, element, params).do_its_work(b.delay_submit)
+                    time.sleep(1)
                 time.sleep(5)
-
-            time.sleep(2)
-            browser.close()
-            print u'关闭浏览器'
+            driver.close()
             print u'======  任务结束  ======'
             print
 
 
+def main():
+    tasks = YamlReader().data
+    conf = Config(tasks.pop(0))
+    print conf.browser, conf.location, conf.delay_submit
+
+    browser = Browser(conf)
+
+    for task in tasks:
+        print task
+        Task(task).run(browser)
+
+
 if __name__ == '__main__':
-    # ym = YamlReader().data
-    # for task in ym:
-    #     # print task
-    #     for item in task:
-    #         print item
-    #
-    # xls = ExcelReader()
-    # print xls.data
-    # print xls.title
-    # print xls.nums
     main()
 
 

@@ -12,31 +12,40 @@
 # "css selector"
 
 ---
-- url: http://www.cashadvance.xyz
+# 配置节，必须为第一节！
+browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
+location: C:\APP\Firefox\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
 
-# [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）, xxx]
+delay_submit: 5  # 延时提交，每次提交之前等待xx秒
+
+---
+# 接下来的均为任务节
+- url: http://www.holidayloans4u.com
+- sheet: cashadvance
+
+# [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
-    - ['id', 'amount', select, select_1, '600']
-    - ['id', 'zip', sendkeys, input_1, '220110']
-    - ['id', 'firstName', sendkeys, input_2, 'Karl']
-    - ['id', 'lastName', sendkeys, input_3, 'James']
-    - ['id', 'email', sendkeys, input_4, 'James@karl.com']
+    - ['id', 'amount', select, select_1]
+    - ['id', 'zip', sendkeys, input_1]
+    - ['id', 'firstName', sendkeys, input_2]
+    - ['id', 'lastName', sendkeys, input_3]
+    - ['id', 'email', sendkeys, input_4]
     - ['id', 'cta-submit', submit, submit_1]
 
 - elements:
-    - ['id', 'city', sendkeys, input_5, 'BeiJing']
-    - ['id', 'address', sendkeys, input_6, 'BeiJing XX Rd']
-    - ['id', 'lengthAtAddress', select, select_2, '2']
-    - ['id', 'rentOwn', select, select_3, 'rent']
-    - ['id', 'license', sendkeys, input_7, 'xxxxx']
-    - ['id', 'ownCar', select, select_4, 'yes']
-    - ['id', 'phone', sendkeys, input_8, '15222223333']
-    - ['id', 'ownCar', select, select_5, 'yes']
-    - ['id', 'ssn', sendkeys, input_9, '44444444']
-    - ['id', 'ownCar', select, select_6, 'yes']
+    - ['id', 'city', sendkeys, input_5]
+    - ['id', 'address', sendkeys, input_6]
+    - ['id', 'lengthAtAddress', select, select_2]
+    - ['id', 'rentOwn', select, select_3]
+    - ['id', 'license', sendkeys, input_7]
+    - ['id', 'ownCar', select, select_4]
+    - ['id', 'phone', sendkeys, input_8]
+    - ['id', 'ownCar', select, select_5]
+    - ['id', 'ssn', sendkeys, input_9]
+    - ['id', 'ownCar', select, select_6]
 
 ---
-- url: xxx
+- url: http://www.cashadvance.xyz
 
 - elements: xxx
 
