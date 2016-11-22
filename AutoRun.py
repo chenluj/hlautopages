@@ -10,7 +10,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-from selenium.webdriver.chrome.options import Options
 
 
 CONFIG = 'config.yaml'
@@ -139,32 +138,45 @@ class Browser:
 
     def open(self):
         if self.browser == 'firefox':
-            binary = FirefoxBinary(self.location)
-            profile = webdriver.FirefoxProfile()
-            profile.add_extension(os.path.abspath('random-agent-spoofer.xpi'))
-            self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
-            self.driver.implicitly_wait(30)
-            print u'[info] 打开浏览器  firefox'
-            return self
+            try:
+                binary = FirefoxBinary(self.location)
+                profile = webdriver.FirefoxProfile()
+                profile.add_extension(os.path.abspath('random-agent-spoofer.xpi'))
+                self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
+                self.driver.implicitly_wait(30)
+                print u'[Info] 打开浏览器  firefox'
+                return self
+            except:
+                print u'[Error] 打开firefox 浏览器失败 请检查浏览器路径配置以及random-agent-spoofer.xpi插件'
+                os._exit(0)
         elif self.browser == 'chrome':
-            option = webdriver.ChromeOptions()
-            option.binary_location = self.location
+            try:
+                option = webdriver.ChromeOptions()
+                option.binary_location = self.location
 
-            self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
-            self.driver.implicitly_wait(30)
-            print u'[info] 打开浏览器  chrome'
-            return self
+                self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
+                self.driver.implicitly_wait(30)
+                print u'[Info] 打开浏览器  chrome'
+                return self
+            except:
+                print u'[Error] 打开chrome浏览器失败 请检查浏览器路径配置以及chromedriver.exe驱动'
+                os._exit(0)
         else:
-            print u'[error] 不支持的浏览器类型'
+            print u'[Error] 不支持的浏览器类型'
+            os._exit(0)
 
     def get(self, url):
-        self.driver.get(url)
-        print u'[info] 打开URL  {}'.format(url)
-        return self.driver
+        try:
+            self.driver.get(url)
+            print u'[Info] 打开URL  {}'.format(url)
+            return self.driver
+        except:
+            print u'[Error] 打开URL失败，请检查配置'
+            os._exit(0)
 
-    def close(self):
-        self.driver.close()
-        print u'[info] 关闭浏览器'
+    def quit(self):
+        self.driver.quit()
+        print u'[Info] 关闭浏览器'
 
 
 class Element:
@@ -175,10 +187,10 @@ class Element:
             self.action = elem_info[2].lower()
             self.element_name = elem_info[3]
             self.params = params
-            print u'[info] 元素已找到  ',
+            print u'[Info] 元素已找到  ',
             print elem_info
         except TimeoutException:
-            print u'[error] 未找到元素  ',
+            print u'[Error] 未找到元素  ',
             print elem_info
 
     def do_its_work(self, delay_submit):
@@ -195,11 +207,11 @@ class Element:
             elif self.action == 'select':
                 Select(self.element).select_by_value(self.pick_value())
             else:
-                print u"[error] 不支持的action {}".format(self.action)
+                print u"[Error] 不支持的action {}".format(self.action)
 
     def pick_value(self):
         value = self.params[self.element_name]
-        print u'[info] 从Excel中取得值 {}'.format(value)
+        print u'[Info] 从Excel中取得值 {}'.format(value)
         return value
 
 
@@ -221,27 +233,45 @@ class Task:
             driver = b.open().get(self.url)
             for page in self.task:
                 for element in page['elements']:
-                    Element(driver, element, params).do_its_work(b.delay_submit)
-                    time.sleep(1)
+                    if isinstance(element, dict):
+                        time.sleep(3)
+                        if driver.current_url == element['if']:
+                            print u'[Info] URL为期待值，任务成功'
+                            break
+                    else:
+                        Element(driver, element, params).do_its_work(b.delay_submit)
+                        time.sleep(1)
                 time.sleep(5)
-            b.close()
+            b.quit()
             print u'======  任务结束  ======='
             print
 
 
 def main():
-    tasks = YamlReader().data
-    conf = Config(tasks.pop(0))
-    # print conf.browser, conf.location, conf.delay_submit
+    try:
+        tasks = YamlReader().data
+        conf = Config(tasks.pop(0))
+    except:
+        print u'[Error] 读取配置文件出错'
+    else:
+        browser = Browser(conf)
+        for task in tasks:
+            print u'[Info] 执行任务  ',
+            print task
+            try:
+                t = Task(task)
+            except:
+                print u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应'
+                os._exit(0)
+            else:
+                try:
+                    t.run(browser)
+                except:
+                    print u'[Error] 执行任务出错，请检查配置与页面是否对应'
+                    browser.quit()
+                    os._exit(0)
 
-    browser = Browser(conf)
-
-    for task in tasks:
-        print u'[info] 执行任务  ',
-        print task
-        Task(task).run(browser)
-
-    print u'[info] 所有任务执行结束，请处理数据后重新启动程序'
+        print u'[Info] 所有任务执行结束，请处理数据后重新启动程序'
 
 
 if __name__ == '__main__':
