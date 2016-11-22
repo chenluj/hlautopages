@@ -1,11 +1,9 @@
-
-
 data.xlsx 用作数据填充
 config.yaml 是配置文件
 
-示例网址 http://www.cashadvance.xyz
-
-浏览器种类和位置写在配置里选择
+示例网址
+http://www.cashadvance.xyz
+http://www.holidayloans4u.com
 
 ===========================================
 整体流程：
@@ -32,5 +30,4 @@ config.yaml 是配置文件
 3.延时提交 延时提交指的是每页表单填写完成以后 延时多久才点击提交按钮 需在配置文件中设定
 
 
-todo： 配置浏览器类型、路径、插件启动
 todo： 判断提交后的页面并处理

@@ -9,6 +9,8 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.chrome.options import Options
 
 
 CONFIG = 'config.yaml'
@@ -137,15 +139,19 @@ class Browser:
 
     def open(self):
         if self.browser == 'firefox':
+            binary = FirefoxBinary(self.location)
             profile = webdriver.FirefoxProfile()
-            profile.set_preference('webdriver.firefox.bin', self.location)
-            self.driver = webdriver.Firefox(firefox_profile=profile)
+            profile.add_extension(os.path.abspath('random-agent-spoofer.xpi'))
+            self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
+            self.driver.implicitly_wait(30)
             print u'[info] 打开浏览器  firefox'
             return self
         elif self.browser == 'chrome':
-            # option = webdriver.ChromeOptions()
-            # option.binary_location = self.location
-            self.driver = webdriver.Chrome(executable_path='chromedriver.exe')
+            option = webdriver.ChromeOptions()
+            option.binary_location = self.location
+
+            self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
+            self.driver.implicitly_wait(30)
             print u'[info] 打开浏览器  chrome'
             return self
         else:

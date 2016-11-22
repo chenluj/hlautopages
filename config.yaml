@@ -11,8 +11,9 @@
 ---
 # 配置节，必须为第一节！
 browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
-location: C:\APP\Firefox\firefox.exe  # 浏览器位置，不写这项配置则为默认路径 todo: 设置浏览器位置？？
-
+location: C:\\APP\\Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
+#browser: chrome
+#location: C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 
 ---
