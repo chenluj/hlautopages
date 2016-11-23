@@ -3,6 +3,10 @@
 import os
 import yaml
 import time
+import copy
+import json
+import tempfile
+import shutil
 from xlrd import open_workbook
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
@@ -121,6 +125,127 @@ class YamlReader:
             return y
 
 
+WEBDRIVER_PREFERENCES = """
+{
+  "frozen": {
+    "app.update.auto": false,
+    "app.update.enabled": false,
+    "browser.displayedE10SNotice": 4,
+    "browser.download.manager.showWhenStarting": false,
+    "browser.EULA.override": true,
+    "browser.EULA.3.accepted": true,
+    "browser.link.open_external": 2,
+    "browser.link.open_newwindow": 2,
+    "browser.offline": false,
+    "browser.reader.detectedFirstArticle": true,
+    "browser.safebrowsing.enabled": false,
+    "browser.safebrowsing.malware.enabled": false,
+    "browser.search.update": false,
+    "browser.selfsupport.url" : "",
+    "browser.sessionstore.resume_from_crash": false,
+    "browser.shell.checkDefaultBrowser": false,
+    "browser.tabs.warnOnClose": false,
+    "browser.tabs.warnOnOpen": false,
+    "datareporting.healthreport.service.enabled": false,
+    "datareporting.healthreport.uploadEnabled": false,
+    "datareporting.healthreport.service.firstRun": false,
+    "datareporting.healthreport.logging.consoleEnabled": false,
+    "datareporting.policy.dataSubmissionEnabled": false,
+    "datareporting.policy.dataSubmissionPolicyAccepted": false,
+    "devtools.errorconsole.enabled": true,
+    "dom.disable_open_during_load": false,
+    "extensions.autoDisableScopes": 10,
+    "extensions.blocklist.enabled": false,
+    "extensions.checkCompatibility.nightly": false,
+    "extensions.logging.enabled": true,
+    "extensions.update.enabled": false,
+    "extensions.update.notifyUser": false,
+    "javascript.enabled": true,
+    "network.manage-offline-status": false,
+    "network.http.phishy-userpass-length": 255,
+    "offline-apps.allow_by_default": true,
+    "prompts.tab_modal.enabled": false,
+    "security.csp.enable": false,
+    "security.fileuri.origin_policy": 3,
+    "security.fileuri.strict_origin_policy": false,
+    "security.warn_entering_secure": false,
+    "security.warn_entering_secure.show_once": false,
+    "security.warn_entering_weak": false,
+    "security.warn_entering_weak.show_once": false,
+    "security.warn_leaving_secure": false,
+    "security.warn_leaving_secure.show_once": false,
+    "security.warn_submit_insecure": false,
+    "security.warn_viewing_mixed": false,
+    "security.warn_viewing_mixed.show_once": false,
+    "signon.rememberSignons": false,
+    "toolkit.networkmanager.disable": true,
+    "toolkit.telemetry.prompted": 2,
+    "toolkit.telemetry.enabled": false,
+    "toolkit.telemetry.rejected": true,
+    "xpinstall.signatures.required": false,
+    "xpinstall.whitelist.required": false
+  },
+  "mutable": {
+    "browser.dom.window.dump.enabled": true,
+    "browser.laterrun.enabled": false,
+    "browser.newtab.url": "about:blank",
+    "browser.newtabpage.enabled": false,
+    "browser.startup.page": 0,
+    "browser.startup.homepage": "about:blank",
+    "browser.usedOnWindows10.introURL": "about:blank",
+    "dom.max_chrome_script_run_time": 30,
+    "dom.max_script_run_time": 30,
+    "dom.report_all_js_exceptions": true,
+    "javascript.options.showInConsole": true,
+    "network.http.max-connections-per-server": 10,
+    "startup.homepage_welcome_url": "about:blank",
+    "startup.homepage_welcome_url.additional": "about:blank",
+    "webdriver_accept_untrusted_certs": true,
+    "webdriver_assume_untrusted_issuer": true
+  }
+}
+"""
+
+
+class FirefoxProfile(webdriver.FirefoxProfile):
+    def __init__(self, profile_directory=None):
+        """
+        Initialises a new instance of a Firefox Profile
+
+        :args:
+         - profile_directory: Directory of profile that you want to use.
+           This defaults to None and will create a new
+           directory when object is created.
+        """
+        if not FirefoxProfile.DEFAULT_PREFERENCES:
+            FirefoxProfile.DEFAULT_PREFERENCES = json.loads(WEBDRIVER_PREFERENCES)
+
+        self.default_preferences = copy.deepcopy(
+            FirefoxProfile.DEFAULT_PREFERENCES['mutable'])
+        self.native_events_enabled = True
+        self.profile_dir = profile_directory
+        self.tempfolder = None
+        if self.profile_dir is None:
+            self.profile_dir = self._create_tempfolder()
+        else:
+            self.tempfolder = tempfile.mkdtemp()
+            newprof = os.path.join(self.tempfolder, "webdriver-py-profilecopy")
+            shutil.copytree(self.profile_dir, newprof,
+                            ignore=shutil.ignore_patterns("parent.lock", "lock", ".parentlock"))
+            self.profile_dir = newprof
+            self._read_existing_userjs(os.path.join(self.profile_dir, "user.js"))
+        self.extensionsDir = os.path.join(self.profile_dir, "extensions")
+        self.userPrefs = os.path.join(self.profile_dir, "user.js")
+
+    def update_preferences(self):
+        for key, value in self.DEFAULT_PREFERENCES['frozen'].items():
+            self.default_preferences[key] = value
+        self._write_user_prefs(self.default_preferences)
+
+    def add_extension(self, extension=os.path.abspath('webdriver.xpi')):
+        self._install_extension(extension)
+
+
 class Config:
     def __init__(self, conf):
         self.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
@@ -140,7 +265,7 @@ class Browser:
         if self.browser == 'firefox':
             try:
                 binary = FirefoxBinary(self.location)
-                profile = webdriver.FirefoxProfile()
+                profile = FirefoxProfile()
                 profile.add_extension(os.path.abspath('random-agent-spoofer.xpi'))
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
                 self.driver.implicitly_wait(30)
