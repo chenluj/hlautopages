@@ -251,6 +251,7 @@ class Config:
         self.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
         self.location = conf['location'] if 'location' in conf else None
         self.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
+        self.if_wait = conf['if_wait'] if 'if_wait' in conf else 3
 
 
 class Browser:
@@ -260,6 +261,7 @@ class Browser:
         self.browser = config.browser
         self.location = config.location
         self.delay_submit = config.delay_submit
+        self.if_wait = config.if_wait
 
     def open(self):
         if self.browser == 'firefox':
@@ -344,6 +346,18 @@ class Task:
     def __init__(self, task):
         self.url = task.pop(0)['url']
         self.sheet = task.pop(0)['sheet']
+        self.log = os.path.abspath(os.curdir) + '\\' + self.sheet + '.log'
+        # print os.path.exists(self.log)
+
+        if os.path.exists(self.log):
+            with open(self.log, 'rb') as f:
+                # print f.read()
+                self.num = len(f.read())
+        else:
+            with open(self.log, 'w') as f:
+                self.num = 0
+        print u'[Info] 检测到已执行 {} 次该任务'.format(self.num)
+
         xls = ExcelReader(sheet=self.sheet)
         self.loop_times = xls.nums
         self.data = xls.data
@@ -351,7 +365,7 @@ class Task:
         self.task = task
 
     def run(self, b):
-        for t in range(self.loop_times):
+        for t in range(self.num, self.loop_times):
             params = self.data[t]
 
             print u'======  任务开始  ======='
@@ -359,7 +373,7 @@ class Task:
             for page in self.task:
                 for element in page['elements']:
                     if isinstance(element, dict):
-                        time.sleep(3)
+                        time.sleep(b.if_wait)
                         if driver.current_url == element['if']:
                             print u'[Info] URL为期待值，任务成功'
                             break
@@ -370,6 +384,8 @@ class Task:
             b.quit()
             print u'======  任务结束  ======='
             print
+            with open(self.log, 'a') as f:
+                f.write('1')
 
 
 def main():
