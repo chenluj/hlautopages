@@ -25,6 +25,7 @@ if_wait: 3
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
     - ['id', 'requested_amount', select, requested_amount]
+    - ['id', 'kw', sendkeys, kw]
     - ['id', 'employment_status', select, employment_status]
     - ['id', 'first_name', sendkeys, first_name]
     - ['id', 'last_name', sendkeys, last_name]

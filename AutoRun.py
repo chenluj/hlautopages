@@ -378,7 +378,10 @@ class Task:
                             print u'[Info] URL为期待值，任务成功'
                             break
                     else:
-                        Element(driver, element, params).do_its_work(b.delay_submit)
+                        try:
+                            Element(driver, element, params).do_its_work(b.delay_submit)
+                        except:
+                            print u'[Warning] 元素执行失败，跳过该元素'
                         time.sleep(1)
                 time.sleep(5)
             b.quit()
