@@ -374,7 +374,7 @@ class Task:
                 for element in page['elements']:
                     if isinstance(element, dict):
                         time.sleep(b.if_wait)
-                        if driver.current_url == element['if']:
+                        if element['if'] in driver.current_url:
                             print u'[Info] URL为期待值，任务成功'
                             break
                     else:
