@@ -7,6 +7,8 @@ import copy
 import json
 import tempfile
 import shutil
+import logging
+from logging.handlers import RotatingFileHandler
 from xlrd import open_workbook
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
@@ -17,7 +19,7 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
 CONFIG = 'config.yaml'
-DATA = 'data.xlsx'
+DATA = 'dataxlsx'
 
 ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select']
 
@@ -53,6 +55,45 @@ class SheetError(Error):
 class DataError(Error):
     """Thrown when something wrong with the data."""
     pass
+
+
+class Logger(object):
+    """自定义日志类，读取配置，并以配置为准进行日志输出，分别到console和log file里。
+        methods:
+            __init__(logger_name='root')
+                读入配置文件，进行配置。logger_name默认为root。
+            get_logger()
+                读取配置，添加相应handler，返回logger。
+    """
+
+    def __init__(self, logger_name='root'):
+        self.logger = logging.getLogger(logger_name)
+        logging.root.setLevel(logging.NOTSET)
+        self.log_file_name = 'AutoRun.log'
+        self.log_level = 'DEBUG'
+        self.console_output = True
+        self.file_output = True
+        self.formatter = logging.Formatter('%(asctime)s %(message)s')
+
+    def get_logger(self):
+        """在logger中添加日志句柄并返回，如果logger已有句柄，则直接返回"""
+        if not self.logger.handlers:  # 避免重复日志
+            if self.console_output:
+                console_handler = logging.StreamHandler()
+                console_handler.setFormatter(self.formatter)
+                console_handler.setLevel(self.log_level)
+                self.logger.addHandler(console_handler)
+            else:
+                pass
+
+            if self.file_output:
+                file_handler = RotatingFileHandler(os.path.abspath(self.log_file_name))
+                file_handler.setFormatter(self.formatter)
+                file_handler.setLevel(self.log_level)
+                self.logger.addHandler(file_handler)
+            else:
+                pass
+        return self.logger
 
 
 class ExcelReader(object):
@@ -251,30 +292,36 @@ class Config:
         self.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
         self.location = conf['location'] if 'location' in conf else None
         self.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
-        self.if_wait = conf['if_wait'] if 'if_wait' in conf else 3
+        self.wait_before_if = conf['wait_before_if'] if 'wait_before_if' in conf else 3
+        self.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else None
+        self.loop = conf['loop'] if 'loop' in conf else False
 
 
 class Browser:
 
-    def __init__(self, config):
+    def __init__(self, conf):
         self.driver = None
-        self.browser = config.browser
-        self.location = config.location
-        self.delay_submit = config.delay_submit
-        self.if_wait = config.if_wait
+        self.conf = conf
+        self.browser = conf.browser
+        self.location = conf.location
+        # self.delay_submit = conf.delay_submit
+        # self.wait_before_if = conf.wait_before_if
+        self.random_agent = conf.random_agent
+        # self.loop = conf.loop
 
     def open(self):
         if self.browser == 'firefox':
             try:
                 binary = FirefoxBinary(self.location)
                 profile = FirefoxProfile()
-                profile.add_extension(os.path.abspath('random-agent-spoofer.xpi'))
+                if self.random_agent:
+                    profile.add_extension(os.path.abspath(self.random_agent))
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
                 self.driver.implicitly_wait(30)
                 print u'[Info] 打开浏览器  firefox'
                 return self
             except:
-                print u'[Error] 打开firefox 浏览器失败 请检查浏览器路径配置以及random-agent-spoofer.xpi插件'
+                print u'[Error] 打开firefox 浏览器失败'
                 os._exit(0)
         elif self.browser == 'chrome':
             try:
@@ -286,7 +333,7 @@ class Browser:
                 print u'[Info] 打开浏览器  chrome'
                 return self
             except:
-                print u'[Error] 打开chrome浏览器失败 请检查浏览器路径配置以及chromedriver.exe驱动'
+                print u'[Error] 打开chrome浏览器失败'
                 os._exit(0)
         else:
             print u'[Error] 不支持的浏览器类型'
@@ -308,9 +355,10 @@ class Browser:
 
 class Element:
     def __init__(self, driver, elem_info, params):
+        self.driver = driver
         try:
-            locator = (elem_info[0], elem_info[1])
-            self.element = WebDriverWait(driver, 15, 0.5).until(presence_of_element_located(locator))
+            self.locator = (elem_info[0], elem_info[1])
+            self.element = WebDriverWait(self.driver, 15, 0.5).until(presence_of_element_located(self.locator))
             self.action = elem_info[2].lower()
             self.element_name = elem_info[3]
             self.params = params
@@ -330,6 +378,12 @@ class Element:
                 time.sleep(delay_submit)
                 self.element.submit()
             elif self.action == 'sendkeys':
+                try:
+                    if self.element.get_attribute('readonly'):
+                        js = "$('input[{0}={1}]').removeAttr('readonly')".format(self.locator[0], self.locator[1])
+                        self.driver.execute_script(js)
+                except:
+                    pass
                 self.element.send_keys(self.pick_value())
             elif self.action == 'select':
                 Select(self.element).select_by_value(self.pick_value())
@@ -347,21 +401,17 @@ class Task:
         self.url = task.pop(0)['url']
         self.sheet = task.pop(0)['sheet']
         self.log = os.path.abspath(os.curdir) + '\\' + self.sheet + '.log'
-        # print os.path.exists(self.log)
 
         if os.path.exists(self.log):
             with open(self.log, 'rb') as f:
-                # print f.read()
                 self.num = len(f.read())
         else:
-            with open(self.log, 'w') as f:
-                self.num = 0
+            self.num = 0
         print u'[Info] 检测到已执行 {} 次该任务'.format(self.num)
 
         xls = ExcelReader(sheet=self.sheet)
         self.loop_times = xls.nums
         self.data = xls.data
-
         self.task = task
 
     def run(self, b):
@@ -370,25 +420,42 @@ class Task:
 
             print u'======  任务开始  ======='
             driver = b.open().get(self.url)
+            used = 0
             for page in self.task:
+                # TODO: error 的刷新
+                for i in range(2):
+                    if presence_of_element_located(('id', 'errorPageContainer')):
+                        driver.refresh()
+                    else:
+                        break
+
                 for element in page['elements']:
                     if isinstance(element, dict):
-                        time.sleep(b.if_wait)
-                        if element['if'] in driver.current_url:
-                            print u'[Info] URL为期待值，任务成功'
-                            break
+                        if 'if_url_pass' in element:
+                            time.sleep(b.conf.wait_before_if)
+                            if element['if_url_pass'] in driver.current_url:
+                                print u'[Info] URL为期待值，任务成功'
+                                break
+                        elif 'wait' in element:
+                            print u'[Info] wait {}s'.format(element['wait'])
+                            time.sleep(element['wait'])
                     else:
                         try:
-                            Element(driver, element, params).do_its_work(b.delay_submit)
+                            Element(driver, element, params).do_its_work(b.conf.delay_submit)
                         except:
                             print u'[Warning] 元素执行失败，跳过该元素'
                         time.sleep(1)
+                # 程序执行完第一个elements，则标记为已执行，写入日志
+                if used == 0:
+                    with open(self.log, 'a') as f:
+                        f.write('1')
+                        used = 1
                 time.sleep(5)
             b.quit()
             print u'======  任务结束  ======='
             print
-            with open(self.log, 'a') as f:
-                f.write('1')
+            if not b.conf.loop:
+                return
 
 
 def main():
@@ -420,8 +487,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-

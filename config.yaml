@@ -7,15 +7,14 @@
 # 操作指令可选以下5种：
 # select    sendkeys    click   clear   submit
 
-
 ---
 # 配置节，必须为第一节！
 browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
-location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
-#browser: chrome
-#location: C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
+#location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
+#random_agent_spoofer: random-agent-spoofer.xpi
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
-if_wait: 3
+wait_before_if: 3  # 判断页面url前等待时间，默认3秒
+loop: true  # 是否循环执行data中的数据，默认False
 
 ---
 # 接下来的均为任务节
@@ -25,7 +24,8 @@ if_wait: 3
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
     - ['id', 'requested_amount', select, requested_amount]
-    - ['id', 'kw', sendkeys, kw]
+    - {wait: 2}
+#    - ['id', 'kw', sendkeys, kw]
     - ['id', 'employment_status', select, employment_status]
     - ['id', 'first_name', sendkeys, first_name]
     - ['id', 'last_name', sendkeys, last_name]
@@ -38,22 +38,5 @@ if_wait: 3
     - ['id', 'homesubmit', submit, homesubmit]
 
 - elements:
-    - {if: 'http://www.holidayloans4u.com/application/'}  # 程序等待3秒，判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
+    - {if_url_pass: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
     - ['id', 'xxx', sendkeys, xxx]
-
-#- elements:
-#    - ['id', 'city', sendkeys, input_5]
-#    - ['id', 'address', sendkeys, input_6]
-#    - ['id', 'lengthAtAddress', select, select_2]
-#    - ['id', 'rentOwn', select, select_3]
-#    - ['id', 'license', sendkeys, input_7]
-#    - ['id', 'ownCar', select, select_4]
-#    - ['id', 'phone', sendkeys, input_8]
-#    - ['id', 'ownCar', select, select_5]
-#    - ['id', 'ssn', sendkeys, input_9]
-#    - ['id', 'ownCar', select, select_6]
-
-#---
-#- url: http://www.cashadvance.xyz
-#
-#- elements: xxx
