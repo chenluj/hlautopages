@@ -11,10 +11,9 @@
 # 配置节，必须为第一节！
 browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
 #location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
-#random_agent_spoofer: random-agent-spoofer.xpi
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
-wait_before_if: 3  # 判断页面url前等待时间，默认3秒
-loop: true  # 是否循环执行data中的数据，默认False
+if_wait: 3  # 判断页面url前等待时间，默认3秒
+loop: False  # 是否循环执行data中的数据，默认False
 
 ---
 # 接下来的均为任务节
@@ -24,7 +23,7 @@ loop: true  # 是否循环执行data中的数据，默认False
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
     - ['id', 'requested_amount', select, requested_amount]
-    - {wait: 2}
+    - {wait: 5}
 #    - ['id', 'kw', sendkeys, kw]
     - ['id', 'employment_status', select, employment_status]
     - ['id', 'first_name', sendkeys, first_name]
@@ -38,5 +37,5 @@ loop: true  # 是否循环执行data中的数据，默认False
     - ['id', 'homesubmit', submit, homesubmit]
 
 - elements:
-    - {if_url_pass: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
+    - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
     - ['id', 'xxx', sendkeys, xxx]

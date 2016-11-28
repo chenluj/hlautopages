@@ -13,13 +13,13 @@ from xlrd import open_workbook
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support.expected_conditions import presence_of_element_located
+from selenium.webdriver.support.expected_conditions import presence_of_element_located, visibility_of_element_located
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
 CONFIG = 'config.yaml'
-DATA = 'dataxlsx'
+DATA = 'data.xlsx'
 
 ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select']
 
@@ -292,8 +292,8 @@ class Config:
         self.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
         self.location = conf['location'] if 'location' in conf else None
         self.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
-        self.wait_before_if = conf['wait_before_if'] if 'wait_before_if' in conf else 3
-        self.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else None
+        self.wait_before_if = conf['if_wait'] if 'if_wait' in conf else 3
+        self.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else 'random-agent-spoofer.xpi'
         self.loop = conf['loop'] if 'loop' in conf else False
 
 
@@ -317,7 +317,7 @@ class Browser:
                 if self.random_agent:
                     profile.add_extension(os.path.abspath(self.random_agent))
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
-                self.driver.implicitly_wait(30)
+                # self.driver.implicitly_wait(30)
                 print u'[Info] 打开浏览器  firefox'
                 return self
             except:
@@ -378,12 +378,12 @@ class Element:
                 time.sleep(delay_submit)
                 self.element.submit()
             elif self.action == 'sendkeys':
-                try:
-                    if self.element.get_attribute('readonly'):
-                        js = "$('input[{0}={1}]').removeAttr('readonly')".format(self.locator[0], self.locator[1])
-                        self.driver.execute_script(js)
-                except:
-                    pass
+                # try:
+                #     if self.element.get_attribute('readonly'):
+                #         js = "$('input[{0}={1}]').removeAttr('readonly')".format(self.locator[0], self.locator[1])
+                #         self.driver.execute_script(js)
+                # except:
+                #     pass
                 self.element.send_keys(self.pick_value())
             elif self.action == 'select':
                 Select(self.element).select_by_value(self.pick_value())
@@ -422,18 +422,29 @@ class Task:
             driver = b.open().get(self.url)
             used = 0
             for page in self.task:
-                # TODO: error 的刷新
-                for i in range(2):
-                    if presence_of_element_located(('id', 'errorPageContainer')):
-                        driver.refresh()
-                    else:
+                # 如果是Error Page，刷新一次，若仍失败，退出
+                error_page = 0
+                for i in range(1, 3):
+                    try:
+                        WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
+                        # driver.find_element_by_id('errorPageContainer')
+                        error_page = i
+                        print u'[Error] 得到Error Page'
+                        if error_page < 2:
+                            print u'[Info] 刷新页面'
+                            driver.refresh()
+                            time.sleep(10)
+                    except TimeoutException:
                         break
+                if error_page == 2:
+                    print u'[Error] 两次得到Error Page，任务失败'
+                    break
 
                 for element in page['elements']:
                     if isinstance(element, dict):
-                        if 'if_url_pass' in element:
+                        if 'if' in element:
                             time.sleep(b.conf.wait_before_if)
-                            if element['if_url_pass'] in driver.current_url:
+                            if element['if'] in driver.current_url:
                                 print u'[Info] URL为期待值，任务成功'
                                 break
                         elif 'wait' in element:
