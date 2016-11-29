@@ -66,11 +66,12 @@ class Logger(object):
                 读取配置，添加相应handler，返回logger。
     """
 
-    def __init__(self, logger_name='root'):
+    def __init__(self, logger_name='root', console_level='DEBUG', file_level='DEBUG'):
         self.logger = logging.getLogger(logger_name)
         logging.root.setLevel(logging.NOTSET)
         self.log_file_name = 'AutoRun.log'
-        self.log_level = 'DEBUG'
+        self.console_log_level = console_level
+        self.file_log_level = file_level
         self.console_output = True
         self.file_output = True
         self.formatter = logging.Formatter('%(asctime)s %(message)s')
@@ -81,7 +82,7 @@ class Logger(object):
             if self.console_output:
                 console_handler = logging.StreamHandler()
                 console_handler.setFormatter(self.formatter)
-                console_handler.setLevel(self.log_level)
+                console_handler.setLevel(self.console_log_level)
                 self.logger.addHandler(console_handler)
             else:
                 pass
@@ -89,11 +90,14 @@ class Logger(object):
             if self.file_output:
                 file_handler = RotatingFileHandler(os.path.abspath(self.log_file_name))
                 file_handler.setFormatter(self.formatter)
-                file_handler.setLevel(self.log_level)
+                file_handler.setLevel(self.file_log_level)
                 self.logger.addHandler(file_handler)
             else:
                 pass
         return self.logger
+
+logger = Logger().get_logger()
+selenium_logger = Logger('selenium.webdriver.remote.remote_connection', console_level='ERROR', file_level='ERROR').get_logger()
 
 
 class ExcelReader(object):
@@ -110,25 +114,27 @@ class ExcelReader(object):
 
     def _book(self):
         try:
-            work_book = open_workbook(self.book_name)
+            return open_workbook(self.book_name)
         except IOError as e:
-            raise DataFileNotAvailableException(e)
-        return work_book
+            logger.exception(e)
+            os._exit(0)
 
     def _sheet(self):
         """Return sheet"""
         try:
             return self.book.sheet_by_name(self.sheet_locator)  # by name
-        except:
-            raise SheetError('Sheet \'{0}\' not exists.'.format(self.sheet_locator))
+        except Exception as e:
+            logger.exception(e)
+            os._exit(0)
 
     @property
     def title(self):
         """First row is title."""
         try:
             return self.sheet.row_values(0)
-        except IndexError:
-            raise DataError('This is a empty sheet, please check your file.')
+        except IndexError as e:
+            logger.exception(e)
+            os._exit(0)
 
     @property
     def data(self):
@@ -318,10 +324,10 @@ class Browser:
                     profile.add_extension(os.path.abspath(self.random_agent))
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
                 # self.driver.implicitly_wait(30)
-                print u'[Info] 打开浏览器  firefox'
+                logger.info(u'[Info] 打开浏览器  firefox')
                 return self
             except:
-                print u'[Error] 打开firefox 浏览器失败'
+                logger.error(u'[Error] 打开firefox 浏览器失败')
                 os._exit(0)
         elif self.browser == 'chrome':
             try:
@@ -330,27 +336,27 @@ class Browser:
 
                 self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
                 self.driver.implicitly_wait(30)
-                print u'[Info] 打开浏览器  chrome'
+                logger.info(u'[Info] 打开浏览器  chrome')
                 return self
             except:
-                print u'[Error] 打开chrome浏览器失败'
+                logger.error(u'[Error] 打开chrome浏览器失败')
                 os._exit(0)
         else:
-            print u'[Error] 不支持的浏览器类型'
+            logger.error(u'[Error] 不支持的浏览器类型')
             os._exit(0)
 
     def get(self, url):
         try:
             self.driver.get(url)
-            print u'[Info] 打开URL  {}'.format(url)
+            logger.info(u'[Info] 打开URL  {}'.format(url))
             return self.driver
         except:
-            print u'[Error] 打开URL失败，请检查配置'
+            logger.error(u'[Error] 打开URL失败，请检查配置')
             os._exit(0)
 
     def quit(self):
         self.driver.quit()
-        print u'[Info] 关闭浏览器'
+        logger.info(u'[Info] 关闭浏览器')
 
 
 class Element:
@@ -362,11 +368,11 @@ class Element:
             self.action = elem_info[2].lower()
             self.element_name = elem_info[3]
             self.params = params
-            print u'[Info] 元素已找到  ',
-            print elem_info
+            logger.info(u'[Info] 元素已找到  {}'.format(str(elem_info)))
+            # print elem_info
         except TimeoutException:
-            print u'[Error] 未找到元素  ',
-            print elem_info
+            logger.info(u'[Error] 未找到元素  {}'.format(str(elem_info)))
+            # print elem_info
 
     def do_its_work(self, delay_submit):
         if self.element:
@@ -388,11 +394,11 @@ class Element:
             elif self.action == 'select':
                 Select(self.element).select_by_value(self.pick_value())
             else:
-                print u"[Error] 不支持的action {}".format(self.action)
+                logger.error(u"[Error] 不支持的action {}".format(self.action))
 
     def pick_value(self):
         value = self.params[self.element_name]
-        print u'[Info] 从Excel中取得值 {}'.format(value)
+        logger.info(u'[Info] 从Excel中取得值 {}'.format(value))
         return value
 
 
@@ -407,7 +413,7 @@ class Task:
                 self.num = len(f.read())
         else:
             self.num = 0
-        print u'[Info] 检测到已执行 {} 次该任务'.format(self.num)
+        logger.info(u'[Info] 检测到已执行 {} 次该任务'.format(self.num))
 
         xls = ExcelReader(sheet=self.sheet)
         self.loop_times = xls.nums
@@ -417,8 +423,8 @@ class Task:
     def run(self, b):
         for t in range(self.num, self.loop_times):
             params = self.data[t]
-
-            print u'======  任务开始  ======='
+            logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 开始执行'.format(self.sheet, self.num + 2))
+            logger.info(u'[Info] ======  任务开始  =======')
             driver = b.open().get(self.url)
             used = 0
             for page in self.task:
@@ -429,15 +435,15 @@ class Task:
                         WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
                         # driver.find_element_by_id('errorPageContainer')
                         error_page = i
-                        print u'[Error] 得到Error Page'
+                        logger.error(u'[Error] 得到Error Page')
                         if error_page < 2:
-                            print u'[Info] 刷新页面'
+                            logger.info(u'[Info] 刷新页面')
                             driver.refresh()
                             time.sleep(10)
                     except TimeoutException:
                         break
                 if error_page == 2:
-                    print u'[Error] 两次得到Error Page，任务失败'
+                    logger.error(u'[Error] 两次得到Error Page，任务失败')
                     break
 
                 for element in page['elements']:
@@ -445,16 +451,16 @@ class Task:
                         if 'if' in element:
                             time.sleep(b.conf.wait_before_if)
                             if element['if'] in driver.current_url:
-                                print u'[Info] URL为期待值，任务成功'
+                                logger.info(u'[Info] URL为期待值，任务成功')
                                 break
                         elif 'wait' in element:
-                            print u'[Info] wait {}s'.format(element['wait'])
+                            logger.info(u'[Info] wait {}s'.format(element['wait']))
                             time.sleep(element['wait'])
                     else:
                         try:
                             Element(driver, element, params).do_its_work(b.conf.delay_submit)
                         except:
-                            print u'[Warning] 元素执行失败，跳过该元素'
+                            logger.warning(u'[Warning] 元素执行失败，跳过该元素')
                         time.sleep(1)
                 # 程序执行完第一个elements，则标记为已执行，写入日志
                 if used == 0:
@@ -463,7 +469,8 @@ class Task:
                         used = 1
                 time.sleep(5)
             b.quit()
-            print u'======  任务结束  ======='
+            logger.info(u'[Info] ======  任务结束  =======')
+            logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束'.format(self.sheet, self.num + 2))
             print
             if not b.conf.loop:
                 return
@@ -474,26 +481,25 @@ def main():
         tasks = YamlReader().data
         conf = Config(tasks.pop(0))
     except:
-        print u'[Error] 读取配置文件出错'
+        logger.error(u'[Error] 读取配置文件出错')
     else:
         browser = Browser(conf)
         for task in tasks:
-            print u'[Info] 执行任务  ',
-            print task
+            logger.info(u'[Info] 执行任务  {}'.format(str(task)))
             try:
                 t = Task(task)
             except:
-                print u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应'
+                logger.error(u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应')
                 os._exit(0)
             else:
                 try:
                     t.run(browser)
                 except:
-                    print u'[Error] 执行任务出错，请检查配置与页面是否对应'
+                    logger.error(u'[Error] 执行任务出错，请检查配置与页面是否对应')
                     browser.quit()
                     os._exit(0)
 
-        print u'[Info] 所有任务执行结束，请处理数据后重新启动程序'
+        logger.info(u'[Info] 所有任务执行结束，请处理数据后重新启动程序\n')
 
 
 if __name__ == '__main__':

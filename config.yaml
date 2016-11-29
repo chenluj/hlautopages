@@ -14,6 +14,7 @@ browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文�
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
 loop: False  # 是否循环执行data中的数据，默认False
+random_agent_spoofer: random-agent-spoofer.xpi
 
 ---
 # 接下来的均为任务节
