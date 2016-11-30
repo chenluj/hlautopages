@@ -250,7 +250,7 @@ class Browser:
                 return self
             except:
                 print u'[Error] 打开firefox 浏览器失败'
-                os._exit(0)
+                raise
         elif self.browser == 'chrome':
             try:
                 option = webdriver.ChromeOptions()
@@ -261,7 +261,7 @@ class Browser:
                 return self
             except:
                 print u'[Error] 打开chrome浏览器失败'
-                os._exit(0)
+                raise
         else:
             print u'[Error] 不支持的浏览器类型'
             os._exit(0)
@@ -274,7 +274,7 @@ class Browser:
             return self.driver
         except:
             print u'[Error] 打开URL失败，请检查配置'
-            os._exit(0)
+            raise
 
     def quit(self):
         self.driver.quit()
@@ -357,7 +357,6 @@ class Task:
                 for i in range(1, 3):
                     try:
                         WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
-                        # driver.find_element_by_id('errorPageContainer')
                         error_page = i
                         print u'[Error] 得到Error Page'
                         if error_page < 2:
@@ -409,20 +408,25 @@ def main():
     else:
         browser = Browser(conf)
         for task in tasks:
-            print u'[Info] 执行任务  {}'.format(str(task))
             try:
-                t = Task(task)
-            except:
-                print u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应'
-                os._exit(0)
-            else:
+                print u'[Info] 执行任务  {}'.format(str(task))
                 try:
-                    t.run(browser)
+                    t = Task(task)
                 except:
-                    print u'[Error] 执行任务出错，请检查配置与页面是否对应'
+                    print u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应'
+                    raise
+                else:
+                    try:
+                        t.run(browser)
+                    except:
+                        print u'[Error] 执行任务出错，请检查配置与页面是否对应'
+                        raise
+            except:
+                try:
                     browser.quit()
-                    os._exit(0)
-
+                except:
+                    pass
+                return
         print u'[Info] 所有任务执行结束，请处理数据后重新启动程序\n'
 
 
