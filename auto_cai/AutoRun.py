@@ -369,12 +369,14 @@ class Task:
                     print u'[Error] 两次得到Error Page，任务失败'
                     break
 
+                done = 0
                 for element in page['elements']:
                     if isinstance(element, dict):
                         if 'if' in element:
                             time.sleep(b.conf.wait_before_if)
                             if element['if'] in driver.current_url:
                                 print u'[Info] URL为期待值，任务成功'
+                                done = 1
                                 break
                         elif 'wait' in element:
                             print u'[Info] wait {}s'.format(element['wait'])
@@ -390,6 +392,8 @@ class Task:
                     with open(self.log, 'a') as f:
                         f.write('1')
                         used = 1
+                if done == 1:
+                    break
                 time.sleep(5)
             b.quit()
             print u'[Info] ======  任务结束  ======='
@@ -404,6 +408,7 @@ def main():
         tasks = YamlReader().data
         conf = Config(tasks.pop(0))
     except:
+        raise
         print u'[Error] 读取配置文件出错'
     else:
         browser = Browser(conf)
