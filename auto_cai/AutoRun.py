@@ -269,7 +269,7 @@ class Browser:
     def get(self, url):
         try:
             self.driver.get(url)
-            print u'[Info] 打开URL  {}',
+            print u'[Info] 打开URL  ',
             print url
             return self.driver
         except:
@@ -290,10 +290,10 @@ class Element:
             self.action = elem_info[2].lower()
             self.element_name = elem_info[3]
             self.params = params
-            print u'[Info] 元素已找到  {}',
+            print u'[Info] 元素已找到  ',
             print elem_info
         except TimeoutException:
-            print u'[Error] 未找到元素  {}',
+            print u'[Error] 未找到元素  ',
             print elem_info
 
     def do_its_work(self, delay_submit):
