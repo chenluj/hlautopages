@@ -1,0 +1,424 @@
+2016-11-29 10:30:48,036 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:30:48,036 [Info] 检测到已执行 2 次该任务
+2016-11-29 10:30:48,048 ======  任务开始  =======
+2016-11-29 10:30:50,332 [Info] 打开浏览器  firefox
+2016-11-29 10:30:55,634 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:30:58,763 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 10:30:58,782 [Info] 从Excel中取得值 500
+2016-11-29 10:30:59,976 [Info] wait 5s
+2016-11-29 10:31:04,989 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 10:31:05,012 [Info] 从Excel中取得值 E
+2016-11-29 10:31:06,197 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 10:31:06,197 [Info] 从Excel中取得值 James
+2016-11-29 10:31:07,303 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-29 10:31:07,303 [Info] 从Excel中取得值 Core
+2016-11-29 10:31:08,405 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-29 10:31:08,405 [Info] 从Excel中取得值 james@core.com
+2016-11-29 10:31:09,532 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-29 10:31:09,532 [Info] 从Excel中取得值 7777777
+2016-11-29 10:31:10,642 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-29 10:31:10,671 [Info] 从Excel中取得值 1
+2016-11-29 10:31:11,851 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-29 10:31:11,851 [Info] 从Excel中取得值 8888888888
+2016-11-29 10:31:12,976 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-29 10:31:14,082 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-29 10:31:15,188 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-29 10:31:34,937 [Info] URL为期待值，任务成功
+2016-11-29 10:31:40,088 [Info] 关闭浏览器
+2016-11-29 10:31:40,088 ======  任务结束  =======
+2016-11-29 10:31:40,089 [Info] 所有任务执行结束，请处理数据后重新启动程序
+2016-11-29 10:33:11,154 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:33:11,155 [Info] 检测到已执行 3 次该任务
+2016-11-29 10:33:11,167 [Info] ======  任务开始  =======
+2016-11-29 10:33:13,430 [Info] 打开浏览器  firefox
+2016-11-29 10:33:18,321 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:33:21,500 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 10:33:21,520 [Info] 从Excel中取得值 700
+2016-11-29 10:33:22,658 [Info] wait 5s
+2016-11-29 10:33:27,676 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 10:33:27,709 [Info] 从Excel中取得值 E
+2016-11-29 10:33:28,874 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 10:33:28,874 [Info] 从Excel中取得值 James
+2016-11-29 10:33:29,983 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-29 10:33:29,984 [Info] 从Excel中取得值 Core
+2016-11-29 10:33:31,101 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-29 10:33:31,102 [Info] 从Excel中取得值 james@core.com
+2016-11-29 10:33:32,234 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-29 10:33:32,234 [Info] 从Excel中取得值 7777777
+2016-11-29 10:33:33,346 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-29 10:33:33,380 [Info] 从Excel中取得值 1
+2016-11-29 10:33:34,572 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-29 10:33:34,572 [Info] 从Excel中取得值 8888888888
+2016-11-29 10:33:35,691 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-29 10:33:36,811 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-29 10:33:37,911 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-29 10:33:58,266 [Info] URL为期待值，任务成功
+2016-11-29 10:34:03,378 [Info] 关闭浏览器
+2016-11-29 10:34:03,378 [Info] ======  任务结束  =======
+2016-11-29 10:34:03,378 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
+2016-11-29 10:34:12,756 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:34:12,756 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:34:12,767 [Info] ======  任务开始  =======
+2016-11-29 10:34:15,043 [Info] 打开浏览器  firefox
+2016-11-29 10:40:43,046 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:40:43,046 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:40:43,059 [Info] ======  任务开始  =======
+2016-11-29 10:40:45,361 [Info] 打开浏览器  firefox
+2016-11-29 10:41:07,055 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:41:07,056 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:41:07,085 [Info] ======  任务开始  =======
+2016-11-29 10:41:09,443 [Info] 打开浏览器  firefox
+2016-11-29 10:41:22,515 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:41:52,813 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:41:52,815 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:41:52,835 [Info] ======  任务开始  =======
+2016-11-29 10:41:55,335 [Error] 打开firefox 浏览器失败
+2016-11-29 10:42:24,010 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:42:24,012 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:42:24,025 [Info] ======  任务开始  =======
+2016-11-29 10:42:26,357 [Info] 打开浏览器  firefox
+2016-11-29 10:43:07,641 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:43:07,641 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:43:07,654 [Info] ======  任务开始  =======
+2016-11-29 10:43:09,973 [Info] 打开浏览器  firefox
+2016-11-29 10:43:16,703 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:46:16,086 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:46:16,088 [Info] 检测到已执行 4 次该任务
+2016-11-29 10:46:16,101 [Info] ======  任务开始  =======
+2016-11-29 10:46:18,398 [Info] 打开浏览器  firefox
+2016-11-29 10:46:25,621 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:46:28,789 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 10:46:28,809 [Info] 从Excel中取得值 800
+2016-11-29 10:46:29,966 [Info] wait 5s
+2016-11-29 10:46:34,982 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 10:46:35,013 [Info] 从Excel中取得值 E
+2016-11-29 10:46:36,177 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 10:46:36,177 [Info] 从Excel中取得值 James
+2016-11-29 10:46:38,500 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:40,503 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:42,503 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:44,507 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:46,509 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:48,509 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:50,512 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:52,515 [Warning] 元素执行失败，跳过该元素
+2016-11-29 10:46:59,515 [Error] 执行任务出错，请检查配置与页面是否对应
+2016-11-29 10:47:00,588 [Info] 关闭浏览器
+2016-11-29 10:48:04,171 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:48:04,171 [Info] 检测到已执行 5 次该任务
+2016-11-29 10:48:04,183 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
+2016-11-29 10:48:13,552 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:48:13,552 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:48:13,563 [Info] ======  任务开始  =======
+2016-11-29 10:48:15,869 [Info] 打开浏览器  firefox
+2016-11-29 10:48:22,015 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:48:25,188 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 10:48:25,210 [Info] 从Excel中取得值 400
+2016-11-29 10:48:26,381 [Info] wait 5s
+2016-11-29 10:48:55,635 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:48:55,637 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:48:55,657 [Info] ======  任务开始  =======
+2016-11-29 10:48:58,082 [Info] 打开浏览器  firefox
+2016-11-29 10:49:05,463 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 10:53:43,051 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:53:43,052 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:53:43,052 [Errno 2] No such file or directory: 'D:\\PY\\hlautopages\\data.xlsx'
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 117, in _book
+    return open_workbook(self.book_name)
+  File "C:\Python27\lib\site-packages\xlrd\__init__.py", line 394, in open_workbook
+    f = open(filename, "rb")
+IOError: [Errno 2] No such file or directory: 'D:\\PY\\hlautopages\\data.xlsx'
+2016-11-29 10:54:15,950 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:54:15,951 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:54:15,951 [Errno 2] No such file or directory: 'D:\\PY\\hlautopages\\data.xlsx'
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 117, in _book
+    return open_workbook(self.book_name)
+  File "C:\Python27\lib\site-packages\xlrd\__init__.py", line 394, in open_workbook
+    f = open(filename, "rb")
+IOError: [Errno 2] No such file or directory: 'D:\\PY\\hlautopages\\data.xlsx'
+2016-11-29 10:54:15,953 Sheet 'holidayloans4u' not exists.
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 125, in _sheet
+    return self.book.sheet_by_name(self.sheet_locator)  # by name
+AttributeError: 'NoneType' object has no attribute 'sheet_by_name'
+2016-11-29 10:55:11,743 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:55:11,743 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:55:11,755 Sheet 'holidayloans4u' not exists.
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 125, in _sheet
+    return self.book.sheet_by_name(self.sheet_locator)  # by name
+  File "C:\Python27\lib\site-packages\xlrd\book.py", line 441, in sheet_by_name
+    raise XLRDError('No sheet named <%r>' % sheet_name)
+XLRDError: No sheet named <'holidayloans4u'>
+2016-11-29 10:56:41,747 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:56:41,747 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:56:41,759 [Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应
+2016-11-29 10:56:59,543 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:56:59,545 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:56:59,562 No sheet named <'holidayloans4u'>
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 125, in _sheet
+    return self.book.sheet_by_name(self.sheet_locator)  # by name
+  File "C:\Python27\lib\site-packages\xlrd\book.py", line 441, in sheet_by_name
+    raise XLRDError('No sheet named <%r>' % sheet_name)
+XLRDError: No sheet named <'holidayloans4u'>
+2016-11-29 10:57:40,910 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:57:40,911 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:57:40,923 No sheet named <'holidayloans4u'>
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 125, in _sheet
+    return self.book.sheet_by_name(self.sheet_locator)  # by name
+  File "C:\Python27\lib\site-packages\xlrd\book.py", line 441, in sheet_by_name
+    raise XLRDError('No sheet named <%r>' % sheet_name)
+XLRDError: No sheet named <'holidayloans4u'>
+2016-11-29 10:57:53,848 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 10:57:53,848 [Info] 检测到已执行 0 次该任务
+2016-11-29 10:57:53,861 list index out of range
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 134, in title
+    return self.sheet.row_values(0)
+  File "C:\Python27\lib\site-packages\xlrd\sheet.py", line 478, in row_values
+    return self._cell_values[rowx][start_colx:]
+IndexError: list index out of range
+2016-11-29 10:59:52,424 [Error] 读取配置文件出错
+2016-11-29 10:59:52,426 while scanning a simple key
+  in "D:\PY\hlautopages\config.yaml", line 17, column 1
+could not find expected ':'
+  in "D:\PY\hlautopages\config.yaml", line 19, column 1
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 480, in main
+    tasks = YamlReader().data
+  File "D:/PY/hlautopages/AutoRun.py", line 171, in data
+    y = [x for x in al]
+  File "C:\Python27\lib\site-packages\yaml\__init__.py", line 83, in load_all
+    yield loader.get_data()
+  File "C:\Python27\lib\site-packages\yaml\constructor.py", line 33, in get_data
+    return self.construct_document(self.get_node())
+  File "C:\Python27\lib\site-packages\yaml\composer.py", line 27, in get_node
+    return self.compose_document()
+  File "C:\Python27\lib\site-packages\yaml\composer.py", line 55, in compose_document
+    node = self.compose_node(None, None)
+  File "C:\Python27\lib\site-packages\yaml\composer.py", line 84, in compose_node
+    node = self.compose_mapping_node(anchor)
+  File "C:\Python27\lib\site-packages\yaml\composer.py", line 127, in compose_mapping_node
+    while not self.check_event(MappingEndEvent):
+  File "C:\Python27\lib\site-packages\yaml\parser.py", line 98, in check_event
+    self.current_event = self.state()
+  File "C:\Python27\lib\site-packages\yaml\parser.py", line 428, in parse_block_mapping_key
+    if self.check_token(KeyToken):
+  File "C:\Python27\lib\site-packages\yaml\scanner.py", line 115, in check_token
+    while self.need_more_tokens():
+  File "C:\Python27\lib\site-packages\yaml\scanner.py", line 149, in need_more_tokens
+    self.stale_possible_simple_keys()
+  File "C:\Python27\lib\site-packages\yaml\scanner.py", line 289, in stale_possible_simple_keys
+    "could not find expected ':'", self.get_mark())
+ScannerError: while scanning a simple key
+  in "D:\PY\hlautopages\config.yaml", line 17, column 1
+could not find expected ':'
+  in "D:\PY\hlautopages\config.yaml", line 19, column 1
+2016-11-29 11:22:55,105 [Error] 读取配置文件出错
+2016-11-29 11:23:02,631 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:23:02,631 [Info] 检测到已执行 0 次该任务
+2016-11-29 11:23:02,644 [Info] ======  任务开始  =======
+2016-11-29 11:23:04,959 [Info] 打开浏览器  firefox
+2016-11-29 11:23:15,022 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 11:23:18,187 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 11:23:18,206 [Info] 从Excel中取得值 400
+2016-11-29 11:23:19,351 [Info] wait 5s
+2016-11-29 11:23:24,371 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 11:23:24,395 [Info] 从Excel中取得值 E
+2016-11-29 11:23:25,565 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 11:23:25,565 [Info] 从Excel中取得值 James
+2016-11-29 11:23:26,680 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-29 11:23:26,680 [Info] 从Excel中取得值 Core
+2016-11-29 11:23:27,767 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-29 11:23:27,767 [Info] 从Excel中取得值 james@core.com
+2016-11-29 11:23:28,887 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-29 11:23:28,887 [Info] 从Excel中取得值 7777777
+2016-11-29 11:23:30,069 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-29 11:23:30,098 [Info] 从Excel中取得值 1
+2016-11-29 11:23:31,302 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-29 11:23:31,302 [Info] 从Excel中取得值 8888888888
+2016-11-29 11:23:32,426 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-29 11:23:33,566 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-29 11:23:34,665 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-29 11:23:55,020 [Info] URL为期待值，任务成功
+2016-11-29 11:24:00,213 [Info] 关闭浏览器
+2016-11-29 11:24:00,213 [Info] 第 1 行数据执行完成
+2016-11-29 11:24:00,213 [Info] ======  任务结束  =======
+2016-11-29 11:24:00,213 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
+2016-11-29 11:27:58,671 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:27:58,671 [Info] 检测到已执行 1 次该任务
+2016-11-29 11:27:58,684 [Error] 执行任务出错，请检查配置与页面是否对应
+2016-11-29 11:28:47,779 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:28:47,779 [Info] 检测到已执行 1 次该任务
+2016-11-29 11:28:47,790 [Error] 执行任务出错，请检查配置与页面是否对应
+2016-11-29 11:29:03,700 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:29:03,701 [Info] 检测到已执行 1 次该任务
+2016-11-29 11:29:03,713 [Info] ======  任务开始  =======
+2016-11-29 11:29:06,062 [Info] 打开浏览器  firefox
+2016-11-29 11:29:17,562 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:29:17,563 [Info] 检测到已执行 1 次该任务
+2016-11-29 11:29:17,575 [Info] Data:data.xlsx Sheet:holidayloans4u Line:3 执行
+2016-11-29 11:29:17,576 [Info] ======  任务开始  =======
+2016-11-29 11:29:19,878 [Info] 打开浏览器  firefox
+2016-11-29 11:29:58,621 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:29:58,621 [Info] 检测到已执行 1 次该任务
+2016-11-29 11:29:58,634 [Info] Data: "data.xlsx"  Sheet: "holidayloans4u"  Line: "3" 开始执行
+2016-11-29 11:29:58,634 [Info] ======  任务开始  =======
+2016-11-29 11:30:00,941 [Info] 打开浏览器  firefox
+2016-11-29 11:30:08,815 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 11:30:11,940 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 11:30:11,960 [Info] 从Excel中取得值 600
+2016-11-29 11:30:13,114 [Info] wait 5s
+2016-11-29 11:30:18,134 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 11:30:18,154 [Info] 从Excel中取得值 E
+2016-11-29 11:30:19,308 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 11:30:19,308 [Info] 从Excel中取得值 James
+2016-11-29 11:30:20,417 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-29 11:30:20,418 [Info] 从Excel中取得值 Core
+2016-11-29 11:30:21,535 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-29 11:30:21,535 [Info] 从Excel中取得值 james@core.com
+2016-11-29 11:30:22,657 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-29 11:30:22,657 [Info] 从Excel中取得值 7777777
+2016-11-29 11:30:23,775 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-29 11:30:23,806 [Info] 从Excel中取得值 1
+2016-11-29 11:30:25,005 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-29 11:30:25,006 [Info] 从Excel中取得值 8888888888
+2016-11-29 11:30:26,118 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-29 11:30:27,239 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-29 11:30:28,334 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-29 11:30:48,756 [Info] URL为期待值，任务成功
+2016-11-29 11:30:53,875 [Info] 关闭浏览器
+2016-11-29 11:30:53,875 [Info] ======  任务结束  =======
+2016-11-29 11:30:53,875 [Error] 执行任务出错，请检查配置与页面是否对应
+2016-11-29 11:30:54,877 [Info] 关闭浏览器
+2016-11-29 11:31:41,069 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-29 11:31:41,071 [Info] 检测到已执行 2 次该任务
+2016-11-29 11:31:41,088 [Info] Sheet: "holidayloans4u"  Line: "4" 开始执行
+2016-11-29 11:31:41,088 [Info] ======  任务开始  =======
+2016-11-29 11:31:43,464 [Info] 打开浏览器  firefox
+2016-11-29 11:31:48,979 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-29 11:31:52,148 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-29 11:31:52,167 [Info] 从Excel中取得值 500
+2016-11-29 11:31:53,325 [Info] wait 5s
+2016-11-29 11:31:58,338 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-29 11:31:58,369 [Info] 从Excel中取得值 E
+2016-11-29 11:31:59,549 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-29 11:31:59,549 [Info] 从Excel中取得值 James
+2016-11-29 11:32:00,657 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-29 11:32:00,658 [Info] 从Excel中取得值 Core
+2016-11-29 11:32:01,749 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-29 11:32:01,749 [Info] 从Excel中取得值 james@core.com
+2016-11-29 11:32:02,864 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-29 11:32:02,864 [Info] 从Excel中取得值 7777777
+2016-11-29 11:32:03,973 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-29 11:32:03,996 [Info] 从Excel中取得值 1
+2016-11-29 11:32:05,151 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-29 11:32:05,151 [Info] 从Excel中取得值 8888888888
+2016-11-29 11:32:06,266 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-29 11:32:07,381 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-29 11:32:08,482 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-29 11:32:28,706 [Info] URL为期待值，任务成功
+2016-11-29 11:32:33,825 [Info] 关闭浏览器
+2016-11-29 11:32:33,825 [Info] ======  任务结束  =======
+2016-11-29 11:32:33,825 [Info] Sheet: "holidayloans4u"  Line: "4" 执行结束
+2016-11-29 11:32:33,825 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
+2016-11-30 08:24:44,650 [Error] 读取配置文件出错
+2016-11-30 08:25:00,490 [Error] 读取配置文件出错
+2016-11-30 08:25:29,318 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-30 08:25:29,318 [Info] 检测到已执行 3 次该任务
+2016-11-30 08:25:29,342 [Info] Sheet: "holidayloans4u"  Line: "5" 开始执行
+2016-11-30 08:25:29,342 [Info] ======  任务开始  =======
+2016-11-30 08:25:42,994 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-30 08:25:42,994 [Info] 检测到已执行 3 次该任务
+2016-11-30 08:25:43,006 [Info] Sheet: "holidayloans4u"  Line: "5" 开始执行
+2016-11-30 08:25:43,006 [Info] ======  任务开始  =======
+2016-11-30 08:25:45,359 [Info] 打开浏览器  firefox
+2016-11-30 08:26:01,190 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-30 08:26:01,190 [Info] 检测到已执行 3 次该任务
+2016-11-30 08:26:01,201 [Info] Sheet: "holidayloans4u"  Line: "5" 开始执行
+2016-11-30 08:26:01,201 [Info] ======  任务开始  =======
+2016-11-30 08:26:03,480 [Info] 打开浏览器  firefox
+2016-11-30 08:26:12,553 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-30 08:26:15,709 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-30 08:26:15,726 [Info] 从Excel中取得值 700
+2016-11-30 08:26:16,884 [Info] wait 5s
+2016-11-30 08:26:21,897 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-30 08:26:21,917 [Info] 从Excel中取得值 E
+2016-11-30 08:26:23,095 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-30 08:26:23,095 [Info] 从Excel中取得值 James
+2016-11-30 08:26:24,203 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-30 08:26:24,203 [Info] 从Excel中取得值 Core
+2016-11-30 08:26:25,302 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-30 08:26:25,302 [Info] 从Excel中取得值 james@core.com
+2016-11-30 08:26:26,421 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-30 08:26:26,421 [Info] 从Excel中取得值 7777777
+2016-11-30 08:26:27,519 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-30 08:26:27,553 [Info] 从Excel中取得值 1
+2016-11-30 08:26:28,757 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-30 08:26:28,757 [Info] 从Excel中取得值 8888888888
+2016-11-30 08:26:29,855 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-30 08:26:30,980 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-30 08:26:32,088 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-30 08:26:52,089 [Info] URL为期待值，任务成功
+2016-11-30 08:26:57,206 [Info] 关闭浏览器
+2016-11-30 08:26:57,206 [Info] ======  任务结束  =======
+2016-11-30 08:26:57,206 [Info] Sheet: "holidayloans4u"  Line: "5" 执行结束
+2016-11-30 08:26:57,206 [Info] 执行任务  [{'url': 'http://www.baidu.com'}, {'sheet': 'baidu'}, {'elements': [['id', 'kw', 'click', 'kw']]}]
+2016-11-30 08:26:57,207 [Info] 检测到已执行 0 次该任务
+2016-11-30 08:26:57,210 No sheet named <'baidu'>
+Traceback (most recent call last):
+  File "D:/PY/hlautopages/AutoRun.py", line 125, in _sheet
+    return self.book.sheet_by_name(self.sheet_locator)  # by name
+  File "C:\Python27\lib\site-packages\xlrd\book.py", line 441, in sheet_by_name
+    raise XLRDError('No sheet named <%r>' % sheet_name)
+XLRDError: No sheet named <'baidu'>
+2016-11-30 08:27:48,506 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'requested_amount'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', 'is_military'], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-11-30 08:27:48,506 [Info] 检测到已执行 4 次该任务
+2016-11-30 08:27:48,517 [Info] Sheet: "holidayloans4u"  Line: "6" 开始执行
+2016-11-30 08:27:48,519 [Info] ======  任务开始  =======
+2016-11-30 08:27:50,806 [Info] 打开浏览器  firefox
+2016-11-30 08:28:49,137 [Info] 打开URL  http://www.holidayloans4u.com
+2016-11-30 08:28:52,295 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'requested_amount']
+2016-11-30 08:28:52,313 [Info] 从Excel中取得值 800
+2016-11-30 08:28:53,456 [Info] wait 5s
+2016-11-30 08:28:58,476 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-11-30 08:28:58,507 [Info] 从Excel中取得值 E
+2016-11-30 08:28:59,667 [Info] 元素已找到  ['id', 'first_name', 'sendkeys', 'first_name']
+2016-11-30 08:28:59,667 [Info] 从Excel中取得值 James
+2016-11-30 08:29:00,762 [Info] 元素已找到  ['id', 'last_name', 'sendkeys', 'last_name']
+2016-11-30 08:29:00,763 [Info] 从Excel中取得值 Core
+2016-11-30 08:29:01,859 [Info] 元素已找到  ['id', 'email', 'sendkeys', 'email']
+2016-11-30 08:29:01,859 [Info] 从Excel中取得值 james@core.com
+2016-11-30 08:29:02,967 [Info] 元素已找到  ['id', 'postal_code', 'sendkeys', 'postal_code']
+2016-11-30 08:29:02,967 [Info] 从Excel中取得值 7777777
+2016-11-30 08:29:04,069 [Info] 元素已找到  ['id', 'is_military', 'select', 'is_military']
+2016-11-30 08:29:04,095 [Info] 从Excel中取得值 1
+2016-11-30 08:29:05,253 [Info] 元素已找到  ['id', 'home_phone', 'sendkeys', 'home_phone']
+2016-11-30 08:29:05,253 [Info] 从Excel中取得值 8888888888
+2016-11-30 08:29:06,367 [Info] 元素已找到  ['id', 'terms', 'click', 'terms']
+2016-11-30 08:29:07,482 [Info] 元素已找到  ['id', 'signature', 'click', 'signature']
+2016-11-30 08:29:08,578 [Info] 元素已找到  ['id', 'homesubmit', 'submit', 'homesubmit']
+2016-11-30 08:29:29,088 [Info] URL为期待值，任务成功
+2016-11-30 08:29:34,200 [Info] 关闭浏览器
+2016-11-30 08:29:34,200 [Info] ======  任务结束  =======
+2016-11-30 08:29:34,200 [Info] Sheet: "holidayloans4u"  Line: "6" 执行结束
+2016-11-30 08:29:34,200 [Info] 执行任务  [{'url': 'http://www.baidu.com'}, {'sheet': 'cashadvance'}, {'elements': [['id', 'kw', 'click', 'kw']]}, {'elements': [{'if': 'http://www.baidu.com'}]}]
+2016-11-30 08:29:34,200 [Info] 检测到已执行 0 次该任务
+2016-11-30 08:29:34,204 [Info] Sheet: "cashadvance"  Line: "2" 开始执行
+2016-11-30 08:29:34,204 [Info] ======  任务开始  =======
+2016-11-30 08:29:36,470 [Info] 打开浏览器  firefox
+2016-11-30 08:29:37,697 [Info] 打开URL  http://www.baidu.com
+2016-11-30 08:29:40,858 [Info] 元素已找到  ['id', 'kw', 'click', 'kw']
+2016-11-30 08:29:58,181 [Info] 关闭浏览器
+2016-11-30 08:29:58,181 [Info] ======  任务结束  =======
+2016-11-30 08:29:58,181 [Info] Sheet: "cashadvance"  Line: "2" 执行结束
+2016-11-30 08:29:58,181 [Info] 所有任务执行结束，请处理数据后重新启动程序
+

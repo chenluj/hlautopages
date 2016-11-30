@@ -1,0 +1,52 @@
+# 此文件为页面的配置文件，所有需要填写的标签的标签类型与定位方式均按指定格式编写
+#
+# 定位方式可选以下8种，推荐用id：
+# "id"    "xpath"     "link text"   "partial link text"
+# "name"  "tag name"  "class name"  "css selector"
+#
+# 操作指令可选以下5种：
+# select    sendkeys    click   clear   submit
+
+---
+# 配置节，必须为第一节！
+browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
+#location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
+delay_submit: 5  # 延时提交，每次提交之前等待xx秒
+if_wait: 3  # 判断页面url前等待时间，默认3秒
+loop: False  # 是否循环执行data中的数据，默认False
+random_agent_spoofer: random-agent-spoofer.xpi
+
+---
+# 接下来的均为任务节
+- url: http://www.holidayloans4u.com
+- sheet: holidayloans4u
+
+# [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
+- elements:
+    - ['id', 'requested_amount', select, random]  # 名称为random则表示随机从网页的选项中选择，注意第一项不在随机之列，因为很多网页第一项是“Select”之类的
+    - {wait: 5}
+    - ['id', 'employment_status', select, employment_status]  # 名称为其他名称则表示从excel里读，读取对应列名的值
+    - ['id', 'first_name', sendkeys, first_name]
+    - ['id', 'last_name', sendkeys, last_name]
+    - ['id', 'email', sendkeys, email]
+    - ['id', 'postal_code', sendkeys, postal_code]
+    - ['id', 'is_military', select, ['1']]  # 名称为列表，则从列表中随机选择一项，如果列表只有一项，则该项概率为100%，固定选择此项
+    - ['id', 'home_phone', sendkeys, home_phone]
+    - ['id', 'terms', click, terms]
+    - ['id', 'signature', click, signature]
+    - ['id', 'homesubmit', submit, homesubmit]
+
+- elements:
+    - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
+    - ['id', 'xxx', sendkeys, xxx]
+
+---
+
+- url: http://www.baidu.com
+- sheet: cashadvance
+
+- elements:
+    - ['id', kw, click, kw]
+
+- elements:
+    - {if: 'http://www.baidu.com'}

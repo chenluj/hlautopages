@@ -1,0 +1,29 @@
+---
+loop: True
+random_agent_spoofer: random_agent_spoofer.xpi
+interval: [1, 10]
+datafile: data.xls
+proxytool: 'C:\\Users\\Z\\Desktop\\work\\"911S5 2.0 2016-07-12"\\ProxyTool\\AutoProxyTool.exe'
+proxycountry: GB
+
+---
+- url: http://www.rawayledgesw.com/tracking202/redirect/dl.php?t202id=621883&t202kw=
+- sheet: holidayloans4u
+
+- elements:
+    - ['id', 'requested_amount', select, requested_amount]
+    - ['id', 'employment_status', select, employment_status]
+    - ['id', 'first_name', sendkeys, first_name]
+    - ['id', 'last_name', sendkeys, last_name]
+    - ['id', 'email', sendkeys, email]
+    - ['id', 'postal_code', sendkeys, postal_code]
+    - ['id', 'is_military', select, is_military]
+    - ['id', 'home_phone', sendkeys, home_phone]
+    - ['id', 'terms', click, terms]
+    - ['id', 'signature', click, signature]
+    - ['id', 'homesubmit', submit, homesubmit]
+
+- elements:
+    - {if: 'http://www.holidayloans4u.com/application/'}
+    - ['id', 'xxx', sendkeys, xxx]
+
