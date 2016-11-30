@@ -471,7 +471,6 @@ class Task:
             b.quit()
             logger.info(u'[Info] ======  任务结束  =======')
             logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.num + 2))
-            print
             if not b.conf.loop:
                 return
 

@@ -422,3 +422,29 @@ XLRDError: No sheet named <'baidu'>
 2016-11-30 08:29:58,181 [Info] Sheet: "cashadvance"  Line: "2" 执行结束
 2016-11-30 08:29:58,181 [Info] 所有任务执行结束，请处理数据后重新启动程序
 
+2016-12-01 00:06:03,723 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'random'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], {'if': 'holidayloans4u'}, ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', ['1']], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-12-01 00:06:03,740 [Info] 检测到已执行 5 次该任务
+2016-12-01 00:06:03,750 [Info] 执行任务  [{'url': 'http://www.baidu.com'}, {'sheet': 'cashadvance'}, {'elements': [['id', 'kw', 'click', 'kw']]}, {'elements': [{'if': 'http://www.baidu.com'}]}]
+2016-12-01 00:06:03,750 [Info] 检测到已执行 1 次该任务
+2016-12-01 00:06:03,753 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
+2016-12-01 00:06:16,737 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'random'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], {'if': 'holidayloans4u'}, ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', ['1']], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-12-01 00:06:16,739 [Info] 检测到已执行 0 次该任务
+2016-12-01 00:06:16,749 [Info] Sheet: "holidayloans4u"  Line: "2" 开始执行
+2016-12-01 00:06:16,749 [Info] ======  任务开始  =======
+2016-12-01 00:06:20,505 [Info] 打开浏览器  firefox
+2016-12-01 00:07:24,668 [Info] 打开URL  http://www.holidayloans4u.com
+2016-12-01 00:07:27,865 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'random']
+2016-12-01 00:07:27,888 [Info] 随机从网页选择
+2016-12-01 00:07:29,022 [Info] wait 5s
+2016-12-01 00:07:34,029 [Info] 元素已找到  ['id', 'employment_status', 'select', 'employment_status']
+2016-12-01 00:07:34,040 [Info] 从Excel中取得值 E
+2016-12-01 00:07:38,144 [Info] URL为期待值，任务成功
+2016-12-01 00:07:38,352 [Info] 关闭浏览器
+2016-12-01 00:07:38,352 [Info] ======  任务结束  =======
+2016-12-01 00:07:38,352 [Info] Sheet: "holidayloans4u"  Line: "2" 执行结束
+
+2016-12-01 00:07:38,352 [Info] 执行任务  [{'url': 'http://www.baidu.com'}, {'sheet': 'cashadvance'}, {'elements': [['id', 'kw', 'click', 'kw']]}, {'elements': [{'if': 'http://www.baidu.com'}]}]
+2016-12-01 00:07:38,352 [Info] 检测到已执行 1 次该任务
+2016-12-01 00:07:38,358 [Info] 所有任务执行结束，请处理数据后重新启动程序
+
