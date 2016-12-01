@@ -71,7 +71,7 @@ selenium_logger = Logger('selenium.webdriver.remote.remote_connection', console_
 
 
 class ExcelReader(object):
-    def __init__(self, sheet=0):
+    def __init__(self, sheet):
         """Read workbook
 
         :param sheet: index of sheet or sheet name.
@@ -280,6 +280,7 @@ class Config:
 class ProxyToolConfigException(Exception):
     pass
 
+
 class IPCheckerConfigException(Exception):
     pass
 
@@ -298,7 +299,7 @@ class Browser:
 
         self.kill_proc()
 
-        proxydata = ExcelReader(sheet=proxysheet)
+        proxydata = ExcelReader(proxysheet)
         self.proxies = proxydata.data
         self.num_proxy = proxydata.nums
         self.country = None
@@ -332,15 +333,28 @@ class Browser:
             logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
             raise ProxyToolConfigException()
 
-    def check_ip():
+    def check_ip(self):
+        """check ip, """
         if self.conf.ipchecker:
             for i in range(2):
-                ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
-                ip_info_dict = xmltodict.parse(ip_info_xml)
-                ip = ip_info_dict['IpInfo']['ip']
-                country = ip_info_dict['IpInfo']['country']
-                region = ip_info_dict['IpInfo']['region']
-                logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+                # if getip api down, raise error
+                try:
+                    ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
+                except urllib2.URLError as e:
+                    logger.error(u'[Error] 接口访问出错')
+                    logger.error(e)
+                    raise
+                # if response format does not right, raise error
+                try:
+                    ip_info_dict = xmltodict.parse(ip_info_xml)
+                    ip = ip_info_dict['IpInfo']['ip']
+                    country = ip_info_dict['IpInfo']['country']
+                    region = ip_info_dict['IpInfo']['region']
+                    logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+                except:
+                    logger.exception(u'[Error] 接口返回的数据格式不正确')
+                    raise
+
                 if self.state != region:
                     return True
                 else:
@@ -354,7 +368,7 @@ class Browser:
             logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
             raise IPCheckerConfigException()
 
-    def kill_proc():
+    def kill_proc(self):
         "kill firefox process"
         logger.info(u'[Info] 清理残留firefox进程')
         os.system('taskkill /F /IM firefox.exe')
@@ -532,9 +546,10 @@ def main():
         browser = Browser(conf)
         try:
             browser.change_proxy()
-            browser.check_ip()
         except:
             pass
+        browser.check_ip()  # if exception raise and stop program
+
         for task in tasks:
             try:
                 logger.info(u'[Info] 执行任务  {}'.format(str(task)))
