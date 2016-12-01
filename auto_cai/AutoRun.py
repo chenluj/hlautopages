@@ -8,6 +8,8 @@ import json
 import tempfile
 import shutil
 import random
+import urllib2
+import xmltodict
 from xlrd import open_workbook
 import logging
 from logging.handlers import RotatingFileHandler
@@ -21,7 +23,7 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 CONFIG = 'config.yaml'
 DATA = 'data.xlsx'
-
+proxysheet = 'proxy'
 ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select']
 
 
@@ -271,6 +273,15 @@ class Config:
         self.wait_before_if = conf['if_wait'] if 'if_wait' in conf else 3
         self.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else 'random-agent-spoofer.xpi'
         self.loop = conf['loop'] if 'loop' in conf else False
+        self.proxytool = conf['proxytool'] if 'proxytool' in conf else None
+        self.ipchecker = conf['ipchecker'] if 'ipchecker' in conf else None
+
+
+class ProxyToolConfigException(Exception):
+    pass
+
+class IPCheckerConfigException(Exception):
+    pass
 
 
 class Browser:
@@ -284,6 +295,70 @@ class Browser:
         # self.wait_before_if = conf.wait_before_if
         self.random_agent = conf.random_agent
         # self.loop = conf.loop
+
+        self.kill_proc()
+
+        proxydata = ExcelReader(sheet=proxysheet)
+        self.proxies = proxydata.data
+        self.num_proxy = proxydata.nums
+        self.country = None
+        self.state = None
+
+    def change_proxy(self):
+        if self.conf.proxytool:
+            proxy_log = os.path.abspath(proxysheet + '.log')
+
+            if os.path.exists(proxy_log):
+                with open(proxy_log, 'rb') as f:
+                    num_used = len(f.read())
+            else:
+                num_used = 0
+            logger.info(u'[Info] 检测到已调用 {} 次代理API'.format(num_used))
+
+            if num_used >= self.num_proxy:
+                logger.error(u'[Error] Excel中没有可用代理')
+                raise ProxyToolConfigException()
+            else:
+                proxy = self.proxies[num_used]
+                self.country = proxy['country']
+                self.state = proxy['state']
+                logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
+                os.system(self.conf.proxytool + 'changeproxy/' + self.country + '/' + self.state)
+                time.sleep(3)
+                with open(proxy_log, 'wb') as f:
+                    f.write('1')
+                    time.sleep(1)
+        else:
+            logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
+            raise ProxyToolConfigException()
+
+    def check_ip():
+        if self.conf.ipchecker:
+            for i in range(2):
+                ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
+                ip_info_dict = xmltodict.parse(ip_info_xml)
+                ip = ip_info_dict['IpInfo']['ip']
+                country = ip_info_dict['IpInfo']['country']
+                region = ip_info_dict['IpInfo']['region']
+                logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+                if self.state != region:
+                    return True
+                else:
+                    logger.warning(u'[Warning] 实际state并非期望值')
+                    if i < 1:
+                        logger.warning(u'[Info] 重新切换代理')
+                        self.change_proxy()
+            logger.error(u'[Error] 重新切换代理仍失败')
+            raise IPCheckerConfigException()
+        else:
+            logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
+            raise IPCheckerConfigException()
+
+    def kill_proc():
+        "kill firefox process"
+        logger.info(u'[Info] 清理残留firefox进程')
+        os.system('taskkill /F /IM firefox.exe')
+        time.sleep(2)
 
     def open(self):
         if self.browser == 'firefox':
@@ -455,6 +530,11 @@ def main():
         logger.error(u'[Error] 读取配置文件出错')
     else:
         browser = Browser(conf)
+        try:
+            browser.change_proxy()
+            browser.check_ip()
+        except:
+            pass
         for task in tasks:
             try:
                 logger.info(u'[Info] 执行任务  {}'.format(str(task)))

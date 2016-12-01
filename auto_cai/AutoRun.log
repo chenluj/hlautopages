@@ -448,3 +448,12 @@ XLRDError: No sheet named <'baidu'>
 2016-12-01 00:07:38,352 [Info] 检测到已执行 1 次该任务
 2016-12-01 00:07:38,358 [Info] 所有任务执行结束，请处理数据后重新启动程序
 
+2016-12-01 09:00:46,625 [Info] 执行任务  [{'url': 'http://www.holidayloans4u.com'}, {'sheet': 'holidayloans4u'}, {'elements': [['id', 'requested_amount', 'select', 'random'], {'wait': 5}, ['id', 'employment_status', 'select', 'employment_status'], {'if': 'holidayloans4u'}, ['id', 'first_name', 'sendkeys', 'first_name'], ['id', 'last_name', 'sendkeys', 'last_name'], ['id', 'email', 'sendkeys', 'email'], ['id', 'postal_code', 'sendkeys', 'postal_code'], ['id', 'is_military', 'select', ['1']], ['id', 'home_phone', 'sendkeys', 'home_phone'], ['id', 'terms', 'click', 'terms'], ['id', 'signature', 'click', 'signature'], ['id', 'homesubmit', 'submit', 'homesubmit']]}, {'elements': [{'if': '/application/'}, ['id', 'xxx', 'sendkeys', 'xxx']]}]
+2016-12-01 09:00:46,628 [Info] 检测到已执行 3 次该任务
+2016-12-01 09:00:46,651 [Info] Sheet: "holidayloans4u"  Line: "5" 开始执行
+2016-12-01 09:00:46,651 [Info] ======  任务开始  =======
+2016-12-01 09:00:49,078 [Info] 打开浏览器  firefox
+2016-12-01 09:00:58,148 [Info] 打开URL  http://www.holidayloans4u.com
+2016-12-01 09:01:01,299 [Info] 元素已找到  ['id', 'requested_amount', 'select', 'random']
+2016-12-01 09:01:01,342 [Info] 随机从网页选择
+2016-12-01 09:01:02,542 [Info] wait 5s
