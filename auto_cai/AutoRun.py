@@ -323,53 +323,62 @@ class Browser:
                 proxy = self.proxies[num_used]
                 self.country = proxy['country']
                 self.state = proxy['state']
-                logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
-                os.system(self.conf.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
-                time.sleep(3)
+                self.call_api()
                 with open(proxy_log, 'wb') as f:
                     f.write('1')
                     time.sleep(1)
+                time.sleep(20)
         else:
             logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
             raise ProxyToolConfigException()
 
+    def call_api(self):
+        logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
+        os.system(self.conf.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
+
     def check_ip(self):
         """check ip, """
         if self.conf.ipchecker:
-            for i in range(2):
-                # if getip api down, raise error
-                try:
-                    ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
-                except urllib2.URLError as e:
-                    logger.error(u'[Error] 接口访问出错')
-                    logger.error(e)
-                    raise IPCheckerConfigException()
-                # if response format does not right, raise error
-                try:
-                    ip_info_dict = xmltodict.parse(ip_info_xml)
-                    ip = ip_info_dict['IpInfo']['ip']
-                    country = ip_info_dict['IpInfo']['country']
-                    region = ip_info_dict['IpInfo']['region']
-                    logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
-                except:
-                    logger.exception(u'[Error] 接口返回的数据格式不正确')
-                    raise IPCheckerConfigException()
+            while True:
+                for i in range(3):
+                    # 使用同一个country和state切换3次
+                    try:
+                        ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
+                    except urllib2.URLError as e:
+                        # if getip api down, raise error
+                        logger.error(u'[Error] 接口访问出错')
+                        logger.error(e)
+                        raise IPCheckerConfigException()
 
-                if self.state != region:
-                    return True
-                else:
-                    logger.warning(u'[Warning] 实际state并非期望值')
-                    if i < 1:
-                        logger.warning(u'[Info] 重新切换代理')
-                        self.change_proxy()
-            logger.error(u'[Error] 重新切换代理仍失败')
-            raise IPCheckerConfigException()
+                    try:
+                        ip_info_dict = xmltodict.parse(ip_info_xml)
+                        ip = ip_info_dict['IpInfo']['ip']
+                        country = ip_info_dict['IpInfo']['country']
+                        region = ip_info_dict['IpInfo']['region']
+                        logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+                    except:
+                        # if response format does not right, raise error
+                        logger.exception(u'[Error] 接口返回的数据格式不正确')
+                        raise IPCheckerConfigException()
+
+                    if self.country == country:
+                        logger.info(u'[Info] 切换代理成功')
+                        return True
+                    else:
+                        logger.warning(u'[Warning] 实际country并非期望值')
+                        if i < 2:
+                            logger.info(u'[Info] 重新切换代理')
+                            self.call_api()
+                            time.sleep(20)
+
+                logger.error(u'[Error] 3次切换代理均失败，读取下一行代理数据')
+                self.change_proxy()
         else:
             logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
             raise IPCheckerConfigException()
 
     def kill_proc(self):
-        "kill firefox process"
+        """kill firefox process"""
         logger.info(u'[Info] 清理残留firefox进程')
         os.system('taskkill /F /IM firefox.exe')
         time.sleep(2)
@@ -459,6 +468,10 @@ class Element:
         return value
 
 
+class NoMoreTaskException(Exception):
+    pass
+
+
 class Task:
     def __init__(self, task):
         self.url = task.pop(0)['url']
@@ -478,109 +491,125 @@ class Task:
         self.task = task
 
     def run(self, b):
-        for t in range(self.num, self.loop_times):
-            params = self.data[t]
-            logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 开始执行'.format(self.sheet, self.num + 2))
-            logger.info(u'[Info] ======  任务开始  =======')
-            driver = b.open().get(self.url)
-            used = 0  # data行使用标志
-            error_page = 0  # error标志
-            for page in self.task:
-                # 如果上次任务执行是error page，则这次执行前刷新下代理
-                if error_page == 2:
-                    try:
-                        b.change_proxy()
-                        error_page = 0  # 重新把error标志置为0
-                    except:
-                        pass
-                # 如果是Error Page，刷新一次，若仍失败，退出
-                for i in range(1, 3):
-                    try:
-                        WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
-                        error_page = i
-                        logger.error(u'[Error] 得到Error Page')
-                        if error_page < 2:
-                            time.sleep(3)
-                            logger.info(u'[Info] 刷新页面')
-                            driver.refresh()
-                            time.sleep(10)
-                    except TimeoutException:
-                        break
-                if error_page == 2:
-                    logger.error(u'[Error] 两次得到Error Page，任务失败')
-                    break
-
-                done = 0
-                for element in page['elements']:
-                    if isinstance(element, dict):
-                        if 'if' in element:
-                            time.sleep(b.conf.wait_before_if)
-                            if element['if'] in driver.current_url:
-                                logger.info(u'[Info] URL为期待值，任务成功')
-                                done = 1
-                                break
-                        elif 'wait' in element:
-                            logger.info(u'[Info] wait {}s'.format(element['wait']))
-                            time.sleep(element['wait'])
-                    else:
+        if self.num < self.loop_times:
+            for t in range(self.num, self.loop_times):
+                params = self.data[t]
+                logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 开始执行'.format(self.sheet, self.num + 2))
+                logger.info(u'[Info] ======  任务开始  =======')
+                driver = b.open().get(self.url)
+                used = 0  # data行使用标志
+                error_page = 0  # error标志
+                for page in self.task:
+                    # 如果上次任务执行是error page，则这次执行前刷新下代理
+                    if error_page == 2:
                         try:
-                            Element(driver, element, params).do_its_work(b.conf.delay_submit)
+                            b.change_proxy()
+                            error_page = 0  # 重新把error标志置为0
                         except:
-                            logger.warning(u'[Warning] 元素执行失败，跳过该元素')
-                        time.sleep(1)
-                # 程序执行完第一个elements，则标记为已执行，写入日志
-                if used == 0:
-                    with open(self.log, 'a') as f:
-                        f.write('1')
-                        used = 1
-                if done == 1:
-                    break
-                time.sleep(5)
-            b.quit()
-            logger.info(u'[Info] ======  任务结束  =======')
-            logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.num + 2))
-            if not b.conf.loop:
-                return
+                            pass
+                    # 如果是Error Page，刷新一次，若仍失败，退出
+                    for i in range(1, 3):
+                        try:
+                            WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
+                            error_page = i
+                            logger.error(u'[Error] 得到Error Page')
+                            if error_page < 2:
+                                time.sleep(3)
+                                logger.info(u'[Info] 刷新页面')
+                                driver.refresh()
+                                time.sleep(10)
+                        except TimeoutException:
+                            break
+                    if error_page == 2:
+                        logger.error(u'[Error] 两次得到Error Page，任务失败')
+                        break
+
+                    done = 0
+                    for element in page['elements']:
+                        if isinstance(element, dict):
+                            if 'if' in element:
+                                time.sleep(b.conf.wait_before_if)
+                                if element['if'] in driver.current_url:
+                                    logger.info(u'[Info] URL为期待值，任务成功')
+                                    done = 1
+                                    break
+                            elif 'wait' in element:
+                                logger.info(u'[Info] wait {}s'.format(element['wait']))
+                                time.sleep(element['wait'])
+                        else:
+                            try:
+                                Element(driver, element, params).do_its_work(b.conf.delay_submit)
+                            except:
+                                logger.warning(u'[Warning] 元素执行失败，跳过该元素')
+                            time.sleep(1)
+                    # 程序执行完第一个elements，则标记为已执行，写入日志
+                    if used == 0:
+                        with open(self.log, 'a') as f:
+                            f.write('1')
+                            used = 1
+                    if done == 1:
+                        break
+                    time.sleep(5)
+                logger.info(u'[Info] 当前网页URL： {}'.format(driver.current_url))
+                b.quit()
+                logger.info(u'[Info] ======  任务结束  =======')
+                logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.num + 2))
+                if not b.conf.loop:
+                    return
+        else:
+            logger.warning(u'[Warning] data中没有更多的数据了')
+            raise NoMoreTaskException()
 
 
 def main():
-    try:
-        tasks = YamlReader().data
-        conf = Config(tasks.pop(0))
-    except:
-        logger.error(u'[Error] 读取配置文件出错')
-    else:
-        browser = Browser(conf)
+    # 循环执行大任务（配置中所有任务节）
+    while True:
         try:
-            browser.change_proxy()
-        except ProxyToolConfigException:
-            return
-        try:
-            browser.check_ip()  # if exception, stop program
-        except IPCheckerConfigException:
-            return
-
-        for task in tasks:
+            tasks = YamlReader().data
+            conf = Config(tasks.pop(0))
+        except:
+            logger.error(u'[Error] 读取配置文件出错')
+        else:
+            browser = Browser(conf)
             try:
-                logger.info(u'[Info] 执行任务  {}'.format(str(task)))
-                try:
-                    t = Task(task)
-                except:
-                    logger.error(u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应')
-                    raise
-                else:
+                browser.change_proxy()
+            except ProxyToolConfigException:
+                break
+
+            try:
+                browser.check_ip()  # if exception, stop program
+            except IPCheckerConfigException:
+                break
+            try:
+
+                for task in tasks:
                     try:
-                        t.run(browser)
-                    except:
-                        logger.error(u'[Error] 执行任务出错，请检查配置与页面是否对应')
+                        logger.info(u'[Info] 执行任务  {}'.format(str(task)))
+                        try:
+                            t = Task(task)
+                        except:
+                            logger.error(u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应')
+                            raise
+                        else:
+                            try:
+                                t.run(browser)
+                            except NoMoreTaskException:
+                                raise
+                            except:
+                                logger.error(u'[Error] 执行任务出错，请检查配置与页面是否对应')
+                                raise
+                    except NoMoreTaskException:
                         raise
-            except:
-                try:
-                    browser.quit()
-                except:
-                    pass
-                return
-        logger.info(u'[Info] 所有任务执行结束，请处理数据后重新启动程序\n')
+                    except:
+                        try:
+                            logger.info(u'[Info] 当前网页URL： {}'.format(browser.driver.current_url))
+                            browser.quit()
+                        except:
+                            pass
+                        return
+            except NoMoreTaskException:
+                break
+    logger.info(u'[Info] 所有任务执行结束，请处理数据后重新启动程序\n')
 
 
 if __name__ == '__main__':

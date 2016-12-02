@@ -14,7 +14,7 @@ browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文�
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
 loop: False  # 是否循环执行data中的数据，默认False
-random_agent_spoofer: random-agent-spoofer.xpi
+random_agent_spoofer: '..\\random-agent-spoofer.xpi'
 proxytool: 'C:\\jk\\ProxyTool\\AutoProxyTool.exe'
 ipchecker: 'http://173.230.146.56/ip/getip.php'
 
@@ -28,7 +28,7 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
     - ['id', 'requested_amount', select, random]  # 名称为random则表示随机从网页的选项中选择，注意第一项不在随机之列，因为很多网页第一项是“Select”之类的
     - {wait: 5}
     - ['id', 'employment_status', select, employment_status]  # 名称为其他名称则表示从excel里读，读取对应列名的值
-    - {if: 'holidayloans4u'}
+#    - {if: 'holidayloans4u'}
     - ['id', 'first_name', sendkeys, first_name]
     - ['id', 'last_name', sendkeys, last_name]
     - ['id', 'email', sendkeys, email]
