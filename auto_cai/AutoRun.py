@@ -324,7 +324,7 @@ class Browser:
                 self.country = proxy['country']
                 self.state = proxy['state']
                 logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
-                os.system(self.conf.proxytool + 'changeproxy/' + self.country + '/' + self.state)
+                os.system(self.conf.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
                 time.sleep(3)
                 with open(proxy_log, 'wb') as f:
                     f.write('1')
@@ -343,7 +343,7 @@ class Browser:
                 except urllib2.URLError as e:
                     logger.error(u'[Error] 接口访问出错')
                     logger.error(e)
-                    raise
+                    raise IPCheckerConfigException()
                 # if response format does not right, raise error
                 try:
                     ip_info_dict = xmltodict.parse(ip_info_xml)
@@ -353,7 +353,7 @@ class Browser:
                     logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
                 except:
                     logger.exception(u'[Error] 接口返回的数据格式不正确')
-                    raise
+                    raise IPCheckerConfigException()
 
                 if self.state != region:
                     return True
@@ -483,10 +483,17 @@ class Task:
             logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 开始执行'.format(self.sheet, self.num + 2))
             logger.info(u'[Info] ======  任务开始  =======')
             driver = b.open().get(self.url)
-            used = 0
+            used = 0  # data行使用标志
+            error_page = 0  # error标志
             for page in self.task:
+                # 如果上次任务执行是error page，则这次执行前刷新下代理
+                if error_page == 2:
+                    try:
+                        b.change_proxy()
+                        error_page = 0  # 重新把error标志置为0
+                    except:
+                        pass
                 # 如果是Error Page，刷新一次，若仍失败，退出
-                error_page = 0
                 for i in range(1, 3):
                     try:
                         WebDriverWait(driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
@@ -546,9 +553,12 @@ def main():
         browser = Browser(conf)
         try:
             browser.change_proxy()
-        except:
-            pass
-        browser.check_ip()  # if exception raise and stop program
+        except ProxyToolConfigException:
+            return
+        try:
+            browser.check_ip()  # if exception, stop program
+        except IPCheckerConfigException:
+            return
 
         for task in tasks:
             try:
