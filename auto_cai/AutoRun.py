@@ -324,7 +324,7 @@ class Browser:
                 self.country = proxy['country']
                 self.state = proxy['state']
                 self.call_api()
-                with open(proxy_log, 'wb') as f:
+                with open(proxy_log, 'a') as f:
                     f.write('1')
                     time.sleep(1)
                 time.sleep(20)
