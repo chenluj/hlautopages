@@ -304,13 +304,13 @@ class Browser:
         self.num_proxy = proxydata.nums
         self.country = None
         self.state = None
+        self.proxy_log = os.path.abspath(proxysheet + '.log')
 
     def change_proxy(self):
         if self.conf.proxytool:
-            proxy_log = os.path.abspath(proxysheet + '.log')
 
-            if os.path.exists(proxy_log):
-                with open(proxy_log, 'rb') as f:
+            if os.path.exists(self.proxy_log):
+                with open(self.proxy_log, 'rb') as f:
                     num_used = len(f.read())
             else:
                 num_used = 0
@@ -324,13 +324,15 @@ class Browser:
                 self.country = proxy['country']
                 self.state = proxy['state']
                 self.call_api()
-                with open(proxy_log, 'a') as f:
-                    f.write('1')
-                    time.sleep(1)
                 time.sleep(20)
         else:
             logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
             raise ProxyToolConfigException()
+
+    def log_proxy(self):
+        with open(self.proxy_log, 'a') as f:
+            f.write('1')
+            time.sleep(1)
 
     def call_api(self):
         logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
@@ -340,8 +342,8 @@ class Browser:
         """check ip, """
         if self.conf.ipchecker:
             while True:
-                for i in range(3):
-                    # 使用同一个country和state切换3次
+                for i in range(6):
+                    # 使用同一个country和state切换6次
                     try:
                         ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
                     except urllib2.URLError as e:
@@ -366,12 +368,13 @@ class Browser:
                         return True
                     else:
                         logger.warning(u'[Warning] 实际country并非期望值')
-                        if i < 2:
+                        if i < 5:
                             logger.info(u'[Info] 重新切换代理')
                             self.call_api()
                             time.sleep(20)
 
-                logger.error(u'[Error] 3次切换代理均失败，读取下一行代理数据')
+                logger.error(u'[Error] 6次切换代理均失败，读取下一行代理数据')
+                self.log_proxy()
                 self.change_proxy()
         else:
             logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
@@ -547,6 +550,7 @@ class Task:
                         with open(self.log, 'a') as f:
                             f.write('1')
                             used = 1
+                        b.log_proxy()  # 执行完第一个elements，写入代理日志，算这个代理已使用过
                     if done == 1:
                         break
                     time.sleep(5)
