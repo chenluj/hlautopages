@@ -344,13 +344,17 @@ class Browser:
             while True:
                 for i in range(6):
                     # 使用同一个country和state切换6次
-                    try:
-                        ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
-                    except urllib2.URLError as e:
-                        # if getip api down, raise error
-                        logger.error(u'[Error] 接口访问出错')
-                        logger.error(e)
-                        raise IPCheckerConfigException()
+                    for j in range(5):
+                        # try get url 5 times.If failed all the time, throw exception
+                        try:
+                            ip_info_xml = urllib2.urlopen(self.conf.ipchecker).read()
+                            time.sleep(1)
+                            break
+                        except urllib2.URLError as e:
+                            if j == 4:
+                                logger.error(u'[Error] 接口访问出错')
+                                logger.error(e)
+                                raise IPCheckerConfigException()
 
                     try:
                         ip_info_dict = xmltodict.parse(ip_info_xml)
@@ -493,7 +497,7 @@ class Task:
         self.data = xls.data
         self.task = task
 
-    def run(self, b):
+    def run(self, b, proxy_log):
         if self.num < self.loop_times:
             for t in range(self.num, self.loop_times):
                 params = self.data[t]
@@ -507,6 +511,7 @@ class Task:
                     if error_page == 2:
                         try:
                             b.change_proxy()
+                            time.sleep(20)
                             error_page = 0  # 重新把error标志置为0
                         except:
                             pass
@@ -550,7 +555,10 @@ class Task:
                         with open(self.log, 'a') as f:
                             f.write('1')
                             used = 1
-                        b.log_proxy()  # 执行完第一个elements，写入代理日志，算这个代理已使用过
+                        if proxy_log == 0:
+                            logger.info(u'[Info] 执行完第一个elements，写入代理日志')
+                            b.log_proxy()  # 执行完第一个elements，写入代理日志，算这个代理已使用过
+                            proxy_log = 1
                     if done == 1:
                         break
                     time.sleep(5)
@@ -559,7 +567,7 @@ class Task:
                 logger.info(u'[Info] ======  任务结束  =======')
                 logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.num + 2))
                 if not b.conf.loop:
-                    return
+                    return proxy_log
         else:
             logger.warning(u'[Warning] data中没有更多的数据了')
             raise NoMoreTaskException()
@@ -584,6 +592,8 @@ def main():
                 browser.check_ip()  # if exception, stop program
             except IPCheckerConfigException:
                 break
+
+            proxy_log = 0
             try:
 
                 for task in tasks:
@@ -596,7 +606,7 @@ def main():
                             raise
                         else:
                             try:
-                                t.run(browser)
+                                proxy_log = t.run(browser, proxy_log)
                             except NoMoreTaskException:
                                 raise
                             except:
