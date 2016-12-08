@@ -10,8 +10,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.expected_conditions import presence_of_element_located, visibility_of_element_located
 from selenium.common.exceptions import StaleElementReferenceException, ElementNotVisibleException
 
-TASK_URL = 'http://whoer.net'
-DATA = u'数据.xls'
+TASK_URL = 'http://www.rawayledgesw.com/tracking202/redirect/dl.php?t202id=722115&t202kw='
+DATA = u'CD-IvyIvy@europe.com-25699--UK.xlsx'
 RANDOM_AGENT_SPOOFER = 'random-agent-spoofer.xpi'
 PROXYTOOL = 'C:\\Users\\Z\\Desktop\\work\\"911S5 2.0 2016-07-12"\\ProxyTool\\AutoProxyTool.exe -changeproxy/GB'
 
@@ -110,7 +110,6 @@ class Task:
         os.system(PROXYTOOL)
         time.sleep(3)
 
-
     def run(self):
         driver = self.b.open().get(TASK_URL)
 
@@ -193,14 +192,13 @@ class Task:
         driver.quit()
 
 
-
-
 def main():
     datas = ExcelReader().data
     for data in datas:
         task = Task(data)
-        # task.change_proxy()
+        task.change_proxy()
         task.run()
+        time.sleep(random.uniform(45*60, 65*60))
 
 
 if __name__ == '__main__':
