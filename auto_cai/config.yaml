@@ -27,6 +27,7 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
 - elements:
     - ['id', 'requested_amount', select, random]  # 名称为random则表示随机从网页的选项中选择，注意第一项不在随机之列，因为很多网页第一项是“Select”之类的
     - {wait: 5}
+    - {wait: [2, 5]}
     - ['id', 'employment_status', select, employment_status]  # 名称为其他名称则表示从excel里读，读取对应列名的值
 #    - {if: 'holidayloans4u'}
     - ['id', 'first_name', sendkeys, first_name]

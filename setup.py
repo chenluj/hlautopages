@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from distutils.core import setup
-import py2exe, sys, os
+import py2exe, sys
 sys.argv.append('py2exe')
 
 options = {"py2exe": {
