@@ -13,8 +13,8 @@ browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文�
 #location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
-loop: False  # 是否循环执行data中的数据，默认False
 random_agent_spoofer: '..\\random-agent-spoofer.xpi'
+proxy: False
 proxytool: 'C:\\jk\\ProxyTool\\AutoProxyTool.exe'
 ipchecker: 'http://173.230.146.56/ip/getip.php'
 
@@ -41,6 +41,8 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
     - ['id', 'homesubmit', submit, homesubmit]
 
 - elements:
+#    - {refresh: normal}
+    - {refresh: force}
     - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
     - ['id', 'xxx', sendkeys, xxx]
 

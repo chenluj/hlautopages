@@ -257,9 +257,9 @@ class Config:
     delay_submit = None
     wait_before_if = None
     random_agent = None
-    loop = None
     proxytool = None
     ipchecker = None
+    proxy = False
 
     def __init__(self, conf):
         Config.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
@@ -267,9 +267,9 @@ class Config:
         Config.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
         Config.wait_before_if = conf['if_wait'] if 'if_wait' in conf else 3
         Config.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else 'random-agent-spoofer.xpi'
-        Config.loop = conf['loop'] if 'loop' in conf else False
         Config.proxytool = conf['proxytool'] if 'proxytool' in conf else None
         Config.ipchecker = conf['ipchecker'] if 'ipchecker' in conf else None
+        Config.proxy = conf['proxy'] if 'proxy' in conf else None
 
 
 # GET TASKS AND CONFIG
@@ -320,9 +320,10 @@ class Proxy:
             raise ProxyToolConfigException()
 
     def call_api(self):
-        logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
-        os.system(CONFIG.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
-        time.sleep(20)
+        if CONFIG.proxy and CONFIG.proxytool:
+            logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
+            os.system(CONFIG.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
+            time.sleep(20)
 
     def _used_nums(self):
         if os.path.exists(self._proxy_log):
@@ -339,83 +340,94 @@ class Proxy:
             time.sleep(1)
 
     def check_ip(self):
-        """check ip, """
+        """检查当前IP对应country是否符合预期"""
         if CONFIG.ipchecker:
             while True:
-                for i in range(6):
-                    # 使用同一个country和state切换6次
-                    for j in range(5):
-                        # try get url 5 times.If failed all the time, throw exception
-                        try:
-                            ip_info_xml = urllib2.urlopen(CONFIG.ipchecker).read()
-                            time.sleep(1)
-                            break
-                        except urllib2.URLError as e:
-                            if j == 4:
-                                logger.error(u'[Error] 接口访问出错')
-                                logger.error(e)
-                                raise IPCheckerConfigException()
-                    # 确定ip、country、state以及格式检查
-                    try:
-                        ip_info_dict = xmltodict.parse(ip_info_xml)
-                        ip = ip_info_dict['IpInfo']['ip']
-                        country = ip_info_dict['IpInfo']['country']
-                        region = ip_info_dict['IpInfo']['region']
-                        logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
-                    except:
-                        # if response format does not right, raise error
-                        logger.exception(u'[Error] 接口返回的数据格式不正确')
-                        raise IPCheckerConfigException()
-                    # 检查country，如果当前country与预期一致则成功
-                    if self.country == country:
-                        logger.info(u'[Info] 切换代理成功')
-                        return True
+                check = False  # IP验证通过标记
+                for i in range(6):  # 使用同一个proxy切换6次
+                    check = self.checker()  # 检查接口
+                    if check:
+                        break
                     else:
-                        logger.warning(u'[Warning] 实际country并非期望值')
-                        if i < 5:
-                            logger.info(u'[Info] 重新切换代理')
-                            self.call_api()
+                        check = self.backup_checker_1()  # 备用接口1
+                        if check:
+                            break
+                        else:
+                            check = self.backup_checker_2()  # 备用接口2
+                            if check:
+                                break
 
-                logger.error(u'[Error] 6次切换代理均失败，读取下一行代理数据')
-                self.log()
-                self.change()
+                    if not check and i < 5:
+                        logger.info(u'[Info] 重新切换代理')
+                        self.call_api()
+                if check:
+                    break
+                else:
+                    logger.error(u'[Error] 6次切换代理均失败，读取下一行代理数据')
+                    self.log()
+                    self.change()  # todo: 如果不切换代理，检查IP失败了怎么办，这里陷入死循环无法出来
         else:
             logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
             raise IPCheckerConfigException()
 
-    def backup_check_ip_1(self):
+    def _get(self, url=CONFIG.ipchecker):
+        try:
+            time.sleep(2)
+            return urllib2.urlopen(url).read()
+        except Exception as e:
+            logger.error(u'[Error] 接口访问出错')
+            logger.error(e)
+
+    def _check(self, country):
+        if self.country == country:  # 检查country，如果当前country与预期一致则成功
+            logger.info(u'[Info] 切换代理成功')
+            return True
+        else:
+            logger.warning(u'[Warning] 实际country并非期望值')
+
+    def checker(self):
+        ip_info_xml = self._get(CONFIG.ipchecker)
+        if ip_info_xml:
+            try:
+                ip_info_dict = xmltodict.parse(ip_info_xml)
+                ip = ip_info_dict['IpInfo']['ip']
+                country = ip_info_dict['IpInfo']['country']
+                region = ip_info_dict['IpInfo']['region']
+                logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+            except:
+                logger.exception(u'[Error] 接口返回的数据格式不正确')
+            else:
+                return self._check(country)
+
+    def backup_checker_1(self):
         backup_url = 'http://freegeoip.net/xml/'
-        ip_info_xml = urllib2.urlopen(backup_url).read()
-        try:
-            ip_info_dict = xmltodict.parse(ip_info_xml)
-            ip = ip_info_dict['Response']['IP']
-            country = ip_info_dict['Response']['CountryCode']
-            region = ip_info_dict['Response']['RegionCode']
-            logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
-        except:
-            logger.exception(u'[Error] 接口返回的数据格式不正确')
-            raise IPCheckerConfigException()
+        ip_info_xml = self._get(backup_url)
+        if ip_info_xml:
+            try:
+                ip_info_dict = xmltodict.parse(ip_info_xml)
+                ip = ip_info_dict['Response']['IP']
+                country = ip_info_dict['Response']['CountryCode']
+                region = ip_info_dict['Response']['RegionCode']
+                logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+            except:
+                logger.exception(u'[Error] 接口返回的数据格式不正确')
+            else:
+                return self._check(country)
 
-        if self.country == country:
-            logger.info(u'[Info] 切换代理成功')
-            return True
-
-    def backup_check_ip_2(self):
+    def backup_checker_2(self):
         backup_url = 'http://ip-api.com/json'
-        ip_info_str = urllib2.urlopen(backup_url).read()
-        try:
-            ip_info_json = json.loads(ip_info_str)
-            ip = ip_info_json['query']
-            country = ip_info_json['countryCode']
-            region = ip_info_json['region']
-            logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
-        except:
-            logger.exception(u'[Error] 接口返回的数据格式不正确')
-            raise IPCheckerConfigException()
-
-        if self.country == country:
-            logger.info(u'[Info] 切换代理成功')
-            return True
+        ip_info_str = self._get(backup_url)
+        if ip_info_str:
+            try:
+                ip_info_json = json.loads(ip_info_str)
+                ip = ip_info_json['query']
+                country = ip_info_json['countryCode']
+                region = ip_info_json['region']
+                logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
+            except:
+                logger.exception(u'[Error] 接口返回的数据格式不正确')
+            else:
+                return self._check(country)
 
 
 def kill_proc():
@@ -449,6 +461,7 @@ class Browser:
 
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
                 logger.info(u'[Info] 打开浏览器  firefox')
+                self.driver.set_page_load_timeout(70)
                 return self
             except:
                 logger.error(u'[Error] 打开firefox 浏览器失败')
@@ -460,10 +473,19 @@ class Browser:
 
                 self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
                 logger.info(u'[Info] 打开浏览器  chrome')
+                self.driver.set_page_load_timeout(70)
                 return self
             except:
                 logger.error(u'[Error] 打开chrome浏览器失败')
                 raise
+        elif CONFIG.browser == 'ie':
+            try:
+                self.driver = webdriver.Ie(executable_path='IEDriverServer.exe')
+                logger.info(u'[Info] 打开浏览器  ie')
+                self.driver.set_page_load_timeout(70)
+                return self
+            except:
+                logger.error(u'[Error] 打开ie浏览器失败')
         else:
             logger.error(u'[Error] 不支持的浏览器类型')
             os._exit(0)
@@ -473,6 +495,15 @@ class Browser:
             self.driver.get(url)
             logger.info(u'[Info] 打开URL  {}'.format(url))
             return self.driver
+        except TimeoutException as e:
+            logger.error(u'[Error] 打开URL超时')
+            Proxy().call_api()
+            try:
+                self.driver.refresh()  # TODO: ?? page_load_time只是对第一次打开url起作用？
+                return self.driver
+            except:
+                logger.error(u'[Error] 再次超时')
+                raise
         except:
             logger.error(u'[Error] 打开URL失败，请检查配置')
             raise
@@ -536,9 +567,13 @@ class Page:
         self.url = self.driver.current_url
         self.error_pages = 0
 
-    def refresh(self):
+    def refresh(self, force='normal'):
         logger.info(u'[Info] 刷新页面')
-        self.driver.refresh()
+        if force == 'force':
+            js = 'location.reload(true)'
+            self.driver.execute_script(js)
+        else:
+            self.driver.refresh()
         time.sleep(10)
 
     def error_page(self):
@@ -571,6 +606,8 @@ class Page:
                         wait_time = element['wait']
                     logger.info(u'[Info] wait {}s'.format(wait_time))
                     time.sleep(wait_time)
+                elif 'refresh' in element:
+                    self.refresh(element['refresh'])
             else:  # 标准元素
                 try:
                     Element(self.driver, element, self.params).do_its_work()
@@ -658,15 +695,16 @@ def main():
     while True:
         finished = False  # 程序结束标记
         if TASKS and CONFIG:
-            # try:
-            #     Proxy().change()
-            # except ProxyToolConfigException:
-            #     break
-            #
-            # try:
-            #     Proxy().check_ip()  # if exception, stop program
-            # except IPCheckerConfigException:
-            #     break
+            try:
+                p = Proxy()
+                p.change()
+            except ProxyToolConfigException:
+                break
+
+            try:
+                p.check_ip()  # if exception, stop program
+            except IPCheckerConfigException:
+                break
 
             proxy_log = 0  # 记代理日志的标记，当执行完所有task中第一个page后写入proxy_log
             for task in TASKS:
@@ -692,5 +730,10 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    Proxy().backup_check_ip_2()
+    main()
+    # p = Proxy()
+    # p.country = 'CN'
+    # p.state = '12'
+    # print p.country, p.state
+    # p.check_ip()
+
