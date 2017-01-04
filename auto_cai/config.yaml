@@ -5,7 +5,7 @@
 # "name"  "tag name"  "class name"  "css selector"
 #
 # 操作指令可选以下5种：
-# select    sendkeys    click   clear   submit
+# select    sendkeys    click   clear   submit    readonly_input
 
 ---
 # 配置节，必须为第一节！
@@ -39,6 +39,8 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
     - ['id', 'terms', click, terms]
     - ['id', 'signature', click, signature]
     - ['id', 'homesubmit', submit, homesubmit]
+
+    - ['id', 'xxx', readonly_input, readonly_xxx]  # 属性为readonly的input元素
 
 - elements:
 #    - {refresh: normal}

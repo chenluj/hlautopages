@@ -25,7 +25,7 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 CONFIGFILE = 'config.yaml'
 DATA = 'data.xlsx'
 PROXY_SHEET = 'proxy'
-ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select']
+ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select', 'readonly_input']
 
 
 WEBDRIVER_PREFERENCES = """
@@ -510,6 +510,7 @@ class Browser:
 
     def quit(self):
         try:
+            self.driver.delete_all_cookies()  # 关闭浏览器之前，清理cookies
             self.driver.quit()
             logger.info(u'[Info] 关闭浏览器')
         except:
@@ -550,6 +551,10 @@ class Element:
                     Select(self.element).select_by_value(random.choice(self.element_name))
                 else:
                     Select(self.element).select_by_value(self.pick_value())
+            elif self.action == 'readonly_input':  # 去掉readonly，然后sendkeys
+                js = "$('input[{0}={1}]').attr('readonly',false)".format(*self.locator)
+                self.driver.execute_script(js)
+                self.element.send_keys(self.pick_value())
             else:
                 logger.error(u"[Error] 不支持的action {}".format(self.action))
 
