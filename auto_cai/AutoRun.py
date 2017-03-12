@@ -27,7 +27,6 @@ DATA = 'data.xlsx'
 PROXY_SHEET = 'proxy'
 ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select', 'readonly_input']
 
-
 WEBDRIVER_PREFERENCES = """
 {
   "frozen": {
@@ -110,6 +109,11 @@ WEBDRIVER_PREFERENCES = """
 """
 
 
+# ---------------------------------------------------------
+#                          工具类
+# ---------------------------------------------------------
+
+
 class Logger(object):
     """自定义日志类，读取配置，并以配置为准进行日志输出，分别到console和log file里。
         methods:
@@ -164,7 +168,7 @@ class ExcelReader(object):
         try:
             return open_workbook(self.book_name)
         except IOError as e:
-            print u'[Error] 打开excel出错'
+            logger.error(u'[Error] 打开excel出错')
             logger.exception(e)
             os._exit(0)
 
@@ -173,8 +177,8 @@ class ExcelReader(object):
         try:
             return self.book.sheet_by_name(self.sheet_locator)  # by name
         except Exception as e:
-            print u'[Error] sheet {} 不存在'.format(self.sheet_locator)
-            logger.exception(e)
+            logger.error(u'[Error] sheet {} 不存在'.format(self.sheet_locator))
+            # logger.exception(e)
             os._exit(0)
 
     @property
@@ -183,8 +187,8 @@ class ExcelReader(object):
         try:
             return self.sheet.row_values(0)
         except IndexError as e:
-            print u'[Error] sheet中没有数据'
-            logger.exception(e)
+            logger.error(u'[Error] sheet中没有数据')
+            # logger.exception(e)
 
     @property
     def data(self):
@@ -250,8 +254,13 @@ class FirefoxProfile(webdriver.FirefoxProfile):
     def add_extension(self, extension=os.path.abspath('webdriver.xpi')):
         self._install_extension(extension)
 
+# ------------------------------------------------------------
+# 上面工具类，下面是业务类
+# ------------------------------------------------------------
+
 
 class Config:
+    """从config文件中读取配置，配置类"""
     browser = None
     location = None
     delay_submit = None
@@ -259,7 +268,7 @@ class Config:
     random_agent = None
     proxytool = None
     ipchecker = None
-    proxy = False
+    proxy = True
 
     def __init__(self, conf):
         Config.browser = conf['browser'].lower() if 'browser' in conf else 'firefox'
@@ -268,8 +277,8 @@ class Config:
         Config.wait_before_if = conf['if_wait'] if 'if_wait' in conf else 3
         Config.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else 'random-agent-spoofer.xpi'
         Config.proxytool = conf['proxytool'] if 'proxytool' in conf else None
-        Config.ipchecker = conf['ipchecker'] if 'ipchecker' in conf else None
-        Config.proxy = conf['proxy'] if 'proxy' in conf else None
+        Config.ipchecker = conf['ipchecker'] if 'ipchecker' in conf else 'http://173.230.146.56/ip/getip.php'
+        Config.proxy = conf['proxy'] if 'proxy' in conf else True
 
 
 # GET TASKS AND CONFIG
@@ -279,18 +288,15 @@ try:
 except Exception as e:
     logger.error(u'[Error] 读取配置文件出错')
     logger.exception(e)
-    sys.exit(0)
+    sys.exit(0)  # todo 这里会退出程序
 
 
 class ProxyToolConfigException(Exception):
     pass
 
 
-class IPCheckerConfigException(Exception):
-    pass
-
-
 class Proxy:
+    """代理类，用于检查IP，切换代理"""
     proxies = None
     num_proxy = None
     num_uesd = None
@@ -306,6 +312,7 @@ class Proxy:
         self._used_nums()
 
     def change(self):
+        """切换下一个代理"""
         if CONFIG.proxytool:
             if self.num_used >= self.num_proxy:
                 logger.error(u'[Error] Excel中没有可用代理')
@@ -317,15 +324,17 @@ class Proxy:
                 self.call_api()
         else:
             logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
-            raise ProxyToolConfigException()
+            raise ProxyToolConfigException()  # todo: 遇到这种情况怎么办，如果未配置代理路径或者excel中没有可用代理
 
     def call_api(self):
+        """调用切换代理API"""
         if CONFIG.proxy and CONFIG.proxytool:
             logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
             os.system(CONFIG.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
             time.sleep(20)
 
     def _used_nums(self):
+        """检查执行了多少个代理行"""
         if os.path.exists(self._proxy_log):
             with open(self._proxy_log, 'rb') as f:
                 self.num_used = len(f.read())
@@ -334,51 +343,50 @@ class Proxy:
         logger.info(u'[Info] 检测到已调用 {} 次代理API'.format(self.num_used))
 
     def log(self):
+        """记录执行了一个代理行"""
         with open(self._proxy_log, 'a') as f:
             f.write('1')
             self.num_used += 1
             time.sleep(1)
 
     def check_ip(self):
-        """检查当前IP对应country是否符合预期"""
-        if CONFIG.ipchecker:
-            while True:
-                check = False  # IP验证通过标记
-                for i in range(6):  # 使用同一个proxy切换6次
-                    check = self.checker()  # 检查接口
-                    if check:
-                        break
-                    else:
-                        check = self.backup_checker_1()  # 备用接口1
-                        if check:
-                            break
-                        else:
-                            check = self.backup_checker_2()  # 备用接口2
-                            if check:
-                                break
-
-                    if not check and i < 5:
-                        logger.info(u'[Info] 重新切换代理')
-                        self.call_api()
+        """检查当前IP对应country是否符合预期，使用同一个代理行切换6次，每次使用一个检查接口与两个备用接口，如果都失败，读取下一个代理行，继续检查"""
+        check = False
+        for i in range(10):
+            check = self.checker()  # 检查接口
+            if check:
+                break
+            else:
+                check = self.backup_checker_1()  # 备用接口1
                 if check:
                     break
                 else:
-                    logger.error(u'[Error] 6次切换代理均失败，读取下一行代理数据')
-                    self.log()
-                    self.change()  # todo: 如果不切换代理，检查IP失败了怎么办，这里陷入死循环无法出来
+                    check = self.backup_checker_2()  # 备用接口2
+                    if check:
+                        break
+            if i <= 6:  # 使用同一个proxy切换7次
+                logger.info(u'[Info] 重新切换代理')  # 如果没有成功，则切换当前行代理
+                self.call_api()
+            else:
+                logger.error(u'[Error] 读取下一行代理数据')
+                self.log()
+                self.change()
+        if check:
+            return True
         else:
-            logger.error(u'[Error] 未配置IP检测接口，无法检测IP是否正确切换')
-            raise IPCheckerConfigException()
+            logger.error(u'[Error] 10次检查均失败，退出程序！')
+            sys.exit(0)  # todo 这里一个退出程序的口
 
     def _get(self, url=CONFIG.ipchecker):
+        """访问接口并获取返回值"""
         try:
             time.sleep(2)
             return urllib2.urlopen(url).read()
-        except Exception as e:
+        except:
             logger.error(u'[Error] 接口访问出错')
-            logger.error(e)
 
     def _check(self, country):
+        """检查当前country是否符合预期"""
         if self.country == country:  # 检查country，如果当前country与预期一致则成功
             logger.info(u'[Info] 切换代理成功')
             return True
@@ -386,6 +394,7 @@ class Proxy:
             logger.warning(u'[Warning] 实际country并非期望值')
 
     def checker(self):
+        """默认接口检查IP，成功返回True，失败返回None"""
         ip_info_xml = self._get(CONFIG.ipchecker)
         if ip_info_xml:
             try:
@@ -395,11 +404,12 @@ class Proxy:
                 region = ip_info_dict['IpInfo']['region']
                 logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
             except:
-                logger.exception(u'[Error] 接口返回的数据格式不正确')
+                logger.error(u'[Error] 接口返回的数据格式不正确')
             else:
                 return self._check(country)
 
     def backup_checker_1(self):
+        """备用接口1检查IP，成功返回True，失败返回None"""
         backup_url = 'http://freegeoip.net/xml/'
         ip_info_xml = self._get(backup_url)
         if ip_info_xml:
@@ -410,11 +420,12 @@ class Proxy:
                 region = ip_info_dict['Response']['RegionCode']
                 logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
             except:
-                logger.exception(u'[Error] 接口返回的数据格式不正确')
+                logger.error(u'[Error] 接口返回的数据格式不正确')
             else:
                 return self._check(country)
 
     def backup_checker_2(self):
+        """备用接口2检查IP，成功返回True，失败返回None"""
         backup_url = 'http://ip-api.com/json'
         ip_info_str = self._get(backup_url)
         if ip_info_str:
@@ -425,30 +436,33 @@ class Proxy:
                 region = ip_info_json['region']
                 logger.info(u'[Info] 检查IP - IP: {0}  country: {1} region： {2}'.format(ip, country, region))
             except:
-                logger.exception(u'[Error] 接口返回的数据格式不正确')
+                logger.error(u'[Error] 接口返回的数据格式不正确')
             else:
                 return self._check(country)
 
 
 def kill_proc():
-    """kill firefox/chrome/ie process"""
+    """杀掉 firefox/chrome/ie 进程"""
     if CONFIG.browser == 'firefox':
         target = 'firefox'
     elif CONFIG.browser == 'chrome':
         target = 'chrome'
     else:
         target = 'iexplore'
-
-    logger.info(u'[Info] 清理残留 {} 进程'.format(target))
-    os.system('taskkill /F /IM {}.exe'.format(target))
-    time.sleep(2)
+    try:
+        logger.info(u'[Info] 清理残留 {} 进程'.format(target))
+        os.system('taskkill /F /IM {}.exe'.format(target))
+        time.sleep(2)
+    except:
+        pass
 
 
 class Browser:
-
+    """浏览器操作类"""
     def __init__(self):
         self.driver = None
         kill_proc()
+        self.error_pages = 0
 
     def open(self):
         """ 根据config打开指定类型浏览器 """
@@ -465,7 +479,7 @@ class Browser:
                 return self
             except:
                 logger.error(u'[Error] 打开firefox 浏览器失败')
-                raise
+                raise  # todo 打开浏览器失败如何处理？？
         elif CONFIG.browser == 'chrome':
             try:
                 option = webdriver.ChromeOptions()
@@ -488,27 +502,32 @@ class Browser:
                 logger.error(u'[Error] 打开ie浏览器失败')
         else:
             logger.error(u'[Error] 不支持的浏览器类型')
-            os._exit(0)
+            os._exit(0)  # todo 浏览器类型不支持如何处理？？
 
     def get(self, url):
-        try:
-            self.driver.get(url)
-            logger.info(u'[Info] 打开URL  {}'.format(url))
-            return self.driver
-        except TimeoutException as e:
-            logger.error(u'[Error] 打开URL超时')
-            Proxy().call_api()
-            try:
-                self.driver.refresh()  # TODO: ?? page_load_time只是对第一次打开url起作用？
-                return self.driver
-            except:
-                logger.error(u'[Error] 再次超时')
-                raise
-        except:
-            logger.error(u'[Error] 打开URL失败，请检查配置')
-            raise
+        """打开URL，成功则返回driver，否则刷新页面，继续尝试，两次失败则重新切一次当前行IP，一共切10次"""
+        for i in range(10):
+            for j in range(2):
+                try:
+                    self.driver.get(url)
+                    if self.driver.current_url:
+                        if self.error_page():
+                            self.refresh('force')
+                            if self.error_page():
+                                Proxy().call_api()
+                                break
+                        logger.info(u'[Info] 打开URL  {}'.format(url))
+                        return self.driver
+                    else:
+                        raise TimeoutException
+                except:
+                    logger.error(u'[Error] 打开URL失败')
+                    if j != 0:
+                        Proxy().call_api()
+                        break
 
     def quit(self):
+        """清理cookies，关闭浏览器"""
         try:
             self.driver.delete_all_cookies()  # 关闭浏览器之前，清理cookies
             self.driver.quit()
@@ -516,8 +535,36 @@ class Browser:
         except:
             pass
 
+    def refresh(self, force='normal'):
+        try:
+            logger.info(u'[Info] 刷新页面')
+            if force == 'force':
+                js = 'location.reload(true)'
+                self.driver.execute_script(js)
+            else:
+                self.driver.refresh()
+            time.sleep(10)
+        except:
+            pass
+
+    def error_page(self):
+        # 如果是Error Page，刷新一次，若仍失败，退出
+        for i in range(1, 3):
+            try:
+                WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
+                self.error_pages = i
+                logger.error(u'[Error] 得到Error Page')
+                if self.error_pages < 2:
+                    time.sleep(3)
+                    self.refresh()
+            except TimeoutException:
+                break
+        if self.error_pages == 2:
+            logger.error(u'[Error] 两次得到Error Page，任务失败')
+
 
 class Element:
+    """元素处理类"""
     def __init__(self, driver, elem_info, params):
         self.driver = driver
         try:
@@ -590,7 +637,7 @@ class Page:
                 logger.error(u'[Error] 得到Error Page')
                 if self.error_pages < 2:
                     time.sleep(3)
-                    self.refresh()
+                    self.refresh('force')
             except TimeoutException:
                 break
         if self.error_pages == 2:
@@ -600,10 +647,46 @@ class Page:
         for element in self.elements:
             if isinstance(element, dict):  # 特殊命令
                 if 'if' in element:
+                    # todo 需要设计一下config文件的格式以及对应的处理
+                    # todo 需要先循环把所有页面url判定
                     time.sleep(CONFIG.wait_before_if)
-                    if element['if'] in self.url:
-                        logger.info(u'[Info] URL为期待值，任务成功')
-                        return True
+                    WebDriverWait(self.driver, 30, 0.5).until(presence_of_element_located(('tag name', 'html')))
+                    found_if = False
+                    for handle in self.driver.window_handles:
+                        self.driver.switch_to(handle)
+                        logger.info(u'[Info] 获得URL： {}'.format(self.driver.current_url))
+                        if isinstance(element['if'], list):
+                            for u in element['if']:
+                                if u in self.driver.current_url:
+                                    found_if = True
+                                    break
+                        elif isinstance(element['if'], basestring):
+                            if element['if'] in self.driver.current_url:
+                                found_if = True
+                        else:
+                            logger.error(u'[ERROR] if标签的值必须是list或者str')
+
+                        if found_if:
+                            logger.info(u'[INFO] 发现匹配URL')
+                            if 'action' in element:
+                                if element['action'] == 'close':
+                                    logger.info(u'[INFO] 关闭浏览器')
+                                    return True
+                                elif element['action'] == 'go':
+                                    logger.info(u'[INFO] 继续执行')
+                                else:
+                                    logger.error(u'[ERROR] 未知动作')
+                    if not found_if:
+                        logger.info(u'[INFO] 未发现匹配网址')
+                        if 'action' in element:
+                            if element['action'] == 'close':
+                                logger.info(u'[INFO] 继续执行')
+                            elif element['action'] == 'go':
+                                logger.info(u'[INFO] 关闭浏览器')
+                                return True
+                            else:
+                                logger.error(u'[ERROR] 未知动作')
+
                 elif 'wait' in element:
                     if isinstance(element['wait'], list):
                         wait_time = random.randrange(*tuple(element['wait']))
@@ -663,7 +746,7 @@ class Task:
         return params
 
     def _end(self):
-        logger.info(u'[Info] 当前网页URL： {}'.format(self.driver.current_url))
+        # logger.info(u'[Info] 当前网页URL： {}'.format(self.driver.current_url))
         self.browser.quit()
         logger.info(u'[Info] ======  任务结束  =======')
         logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.ran_nums + 2))
@@ -706,10 +789,7 @@ def main():
             except ProxyToolConfigException:
                 break
 
-            try:
-                p.check_ip()  # if exception, stop program
-            except IPCheckerConfigException:
-                break
+            p.check_ip()
 
             proxy_log = 0  # 记代理日志的标记，当执行完所有task中第一个page后写入proxy_log
             for task in TASKS:
@@ -717,7 +797,7 @@ def main():
                     t = Task(task)
                 except Exception as e:
                     logger.error(u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应')
-                    logger.exception(e)
+                    # logger.exception(e)
                 else:
                     try:
                         proxy_log = t.run(proxy_log)
@@ -726,7 +806,7 @@ def main():
                         break
                     except Exception as e:
                         logger.error(u'[Error] 执行任务出错，请检查配置与页面是否对应')
-                        logger.exception(e)
+                        # logger.exception(e)
                         logger.info(u'[Info] 当前网页URL： {}'.format(t.url))
                         t.browser.quit()
         if finished:
@@ -736,9 +816,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # p = Proxy()
-    # p.country = 'CN'
-    # p.state = '12'
-    # print p.country, p.state
-    # p.check_ip()
-

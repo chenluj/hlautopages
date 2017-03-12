@@ -14,7 +14,7 @@ browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文�
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
 random_agent_spoofer: '..\\random-agent-spoofer.xpi'
-proxy: False
+#proxy: False
 proxytool: 'C:\\jk\\ProxyTool\\AutoProxyTool.exe'
 ipchecker: 'http://173.230.146.56/ip/getip.php'
 
@@ -45,7 +45,9 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
 - elements:
 #    - {refresh: normal}
     - {refresh: force}
-    - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
+#    - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
+    - {if: ['www.a.com', 'www.b.com'], action: close}
+    - {if: 'www.c.com', action: go}
     - ['id', 'xxx', sendkeys, xxx]
 
 ---
