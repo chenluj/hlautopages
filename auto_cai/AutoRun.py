@@ -288,7 +288,7 @@ try:
 except Exception as e:
     logger.error(u'[Error] 读取配置文件出错')
     logger.exception(e)
-    sys.exit(0)  # todo 这里会退出程序
+    sys.exit(0)
 
 
 class ProxyToolConfigException(Exception):
@@ -710,7 +710,7 @@ class NoMoreTaskException(Exception):
 
 class Task:
     def __init__(self, task):
-        self.task = task
+        self.task = copy.copy(task)
         self.url = self.task.pop(0)['url']
         self.sheet = self.task.pop(0)['sheet']
         self.log = os.path.abspath(os.curdir) + '\\' + self.sheet + '.log'

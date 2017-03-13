@@ -13,50 +13,57 @@ browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文�
 #location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
-random_agent_spoofer: '..\\random-agent-spoofer.xpi'
-#proxy: False
+random_agent_spoofer: 'random-agent-spoofer.xpi'
+proxy: False
 proxytool: 'C:\\jk\\ProxyTool\\AutoProxyTool.exe'
 ipchecker: 'http://173.230.146.56/ip/getip.php'
 
 ---
 # 接下来的均为任务节
-- url: http://www.holidayloans4u.com
-- sheet: holidayloans4u
+- url: https://www.cashadvance.com/
+- sheet: cashadvance
 
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
-    - ['id', 'requested_amount', select, random]  # 名称为random则表示随机从网页的选项中选择，注意第一项不在随机之列，因为很多网页第一项是“Select”之类的
-    - {wait: 5}
-    - {wait: [2, 5]}
-    - ['id', 'employment_status', select, employment_status]  # 名称为其他名称则表示从excel里读，读取对应列名的值
-#    - {if: 'holidayloans4u'}
-    - ['id', 'first_name', sendkeys, first_name]
-    - ['id', 'last_name', sendkeys, last_name]
+    - ['id', 'amount', select, ['100','200','300','400','500']]
+    - ['id', 'zip', sendkeys, zip]
+    - ['id', 'firstName', sendkeys, first_name]
+    - ['id', 'lastName', sendkeys, last_name]
     - ['id', 'email', sendkeys, email]
-    - ['id', 'postal_code', sendkeys, postal_code]
-    - ['id', 'is_military', select, ['1']]  # 名称为列表，则从列表中随机选择一项，如果列表只有一项，则该项概率为100%，固定选择此项
-    - ['id', 'home_phone', sendkeys, home_phone]
-    - ['id', 'terms', click, terms]
-    - ['id', 'signature', click, signature]
-    - ['id', 'homesubmit', submit, homesubmit]
-
-    - ['id', 'xxx', readonly_input, readonly_xxx]  # 属性为readonly的input元素
+    - ['id', 'cta-submit', submit, submit_1]
 
 - elements:
-#    - {refresh: normal}
-    - {refresh: force}
-#    - {if: '/application/'}  # 判断url，如果与预期相同，则任务成功，关闭浏览器，否则执行下面的步骤
-    - {if: ['www.a.com', 'www.b.com'], action: close}
-    - {if: 'www.c.com', action: go}
-    - ['id', 'xxx', sendkeys, xxx]
-
----
-
-- url: http://www.baidu.com
-- sheet: cashadvance
+    - {wait: [2, 5]}
+    - ['id', 'address', sendkeys, address]
+    - ['id', 'lengthAtAddress', select, random]
+    - ['id', 'rentOwn', select, random]
+    - ['id', 'license', sendkeys, dlnumber]
+    - ['id', 'licenseState', select, dlstate]
+    - ['id', 'ownCar', select, ['yes']]
+    - ['id', 'phone', sendkeys, homephone]
+    - ['id', 'callTime', select, random]
+    - ['id', 'bMonth', select, bMonth]
+    - ['id', 'bDay', select, bDay]
+    - ['id', 'bYear', select, bYear]
+    - ['id', 'ssn', sendkeys, ssn]
+    - ['id', 'nextButton', click, nextButton]
 
 - elements:
-    - ['id', kw, click, kw]
+    - {wait: [2, 5]}
+    - ['id', 'armedForces', select, ['no']]
+    - ['id', 'incomeSource', select, ['EMPLOYMENT']]
+    - ['id', 'employerName', sendkeys, employer_name]
+    - ['id', 'timeEmployed', select, random]
+    - ['id', 'employerPhone', sendkeys, workphone]
+    - ['id', 'jobTitle', sendkeys, job_title]
+    - ['id', 'paidEvery', select, random]
+    - ['id', 'nextPayday', clear, nextPayday]
+    - ['id', 'nextPayday', readonly_input, readonly]
+    - ['id', 'abaNumber', sendkeys, routingnumber]
+    - ['id', 'accountNumber', sendkeys, accountnumber]
+    - ['id', 'accountType', select, ['checking']]
+    - ['id', 'monthsBank', select, random]
+    - ['id', 'directDeposit', select, ['yes']]
+    - ['id', 'monthlyNetIncome', select, random]
+    - ['id', 'submitButton', click, submitButton]
 
-- elements:
-    - {if: 'http://www.baidu.com'}
