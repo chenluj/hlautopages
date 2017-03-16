@@ -477,7 +477,7 @@ class Browser:
                 logger.info(u'[Info] 打开浏览器  firefox')
                 self.driver.set_page_load_timeout(70)
                 return self
-            except:
+            except Exception as e:
                 logger.error(u'[Error] 打开firefox 浏览器失败')
                 raise  # todo 打开浏览器失败如何处理？？
         elif CONFIG.browser == 'chrome':
@@ -647,13 +647,11 @@ class Page:
         for element in self.elements:
             if isinstance(element, dict):  # 特殊命令
                 if 'if' in element:
-                    # todo 需要设计一下config文件的格式以及对应的处理
-                    # todo 需要先循环把所有页面url判定
                     time.sleep(CONFIG.wait_before_if)
                     WebDriverWait(self.driver, 30, 0.5).until(presence_of_element_located(('tag name', 'html')))
                     found_if = False
                     for handle in self.driver.window_handles:
-                        self.driver.switch_to(handle)
+                        self.driver.switch_to.window(handle)
                         logger.info(u'[Info] 获得URL： {}'.format(self.driver.current_url))
                         if isinstance(element['if'], list):
                             for u in element['if']:
@@ -664,28 +662,28 @@ class Page:
                             if element['if'] in self.driver.current_url:
                                 found_if = True
                         else:
-                            logger.error(u'[ERROR] if标签的值必须是list或者str')
+                            logger.error(u'[Error] if标签的值必须是list或者str')
 
                         if found_if:
-                            logger.info(u'[INFO] 发现匹配URL')
+                            logger.info(u'[Info] 发现匹配URL')
                             if 'action' in element:
                                 if element['action'] == 'close':
-                                    logger.info(u'[INFO] 关闭浏览器')
+                                    logger.info(u'[Info] 关闭浏览器')
                                     return True
                                 elif element['action'] == 'go':
-                                    logger.info(u'[INFO] 继续执行')
+                                    logger.info(u'[Info] 继续执行')
                                 else:
-                                    logger.error(u'[ERROR] 未知动作')
+                                    logger.error(u'[Error] 未知动作')
                     if not found_if:
-                        logger.info(u'[INFO] 未发现匹配网址')
+                        logger.info(u'[Info] 未发现匹配网址')
                         if 'action' in element:
                             if element['action'] == 'close':
-                                logger.info(u'[INFO] 继续执行')
+                                logger.info(u'[Info] 继续执行')
                             elif element['action'] == 'go':
-                                logger.info(u'[INFO] 关闭浏览器')
+                                logger.info(u'[Info] 关闭浏览器')
                                 return True
                             else:
-                                logger.error(u'[ERROR] 未知动作')
+                                logger.error(u'[Error] 未知动作')
 
                 elif 'wait' in element:
                     if isinstance(element['wait'], list):
