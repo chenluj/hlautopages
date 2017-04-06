@@ -9,11 +9,11 @@
 
 ---
 # 配置节，必须为第一节！
-browser: firefox  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
+browser: chrome  # 可选firefox、chrome，若为chrome，则需在当前文件夹下添加chromedriver.exe
 #location: C:\\Program Files\\Mozilla Firefox\\firefox.exe  # 浏览器位置，不写这项配置则为默认路径
 delay_submit: 5  # 延时提交，每次提交之前等待xx秒
 if_wait: 3  # 判断页面url前等待时间，默认3秒
-random_agent_spoofer: '..\random-agent-spoofer.xpi'
+#random_agent_spoofer: '..\random-agent-spoofer.xpi'
 proxy: False
 proxytool: 'C:\\jk\\ProxyTool\\AutoProxyTool.exe'
 ipchecker: 'http://173.230.146.56/ip/getip.php'
@@ -25,6 +25,8 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
 
 # [定位方式, 定位表达式, 动作, 名称（对应Excel中列名）]
 - elements:
+#    - {switch: 0}  # 可以是frame的id，name，或者序号（从0开始）
+#    - {switch: 'default_content'}  # default_content表示切回主文档
     - ['id', 'amount', select, ['100','200','300','400','500']]
     - ['id', 'zip', sendkeys, zip]
     - ['id', 'firstName', sendkeys, first_name]
@@ -33,9 +35,10 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
     - ['id', 'cta-submit', submit, submit_1]
 
 - elements:
-    - {if: 'www.cash', action: go}
+    - {if: 'www.cawwwsh', action: go, else: skip}
     - {wait: [2, 5]}
     - ['id', 'address', sendkeys, address]
+    - {if: 'www.cash', action: go, else: skip}
     - ['id', 'lengthAtAddress', select, random]
     - ['id', 'rentOwn', select, random]
     - ['id', 'license', sendkeys, dlnumber]
@@ -51,10 +54,13 @@ ipchecker: 'http://173.230.146.56/ip/getip.php'
 
 - elements:
     - {wait: [2, 5]}
+    - {if: 'www.a.com', action: go, else: skip}
     - ['id', 'armedForces', select, ['no']]
     - ['id', 'incomeSource', select, ['EMPLOYMENT']]
+    - {if: 'www.b.com', action: go, else: skip}
     - ['id', 'employerName', sendkeys, employer_name]
     - ['id', 'timeEmployed', select, random]
+    - {if: 'www.c.com', action: go}
     - ['id', 'employerPhone', sendkeys, workphone]
     - ['id', 'jobTitle', sendkeys, job_title]
     - ['id', 'paidEvery', select, random]

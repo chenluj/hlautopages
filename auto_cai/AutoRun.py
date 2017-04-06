@@ -24,6 +24,7 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 CONFIGFILE = 'config.yaml'
 DATA = 'data.xlsx'
+UA_FILE = 'UA.txt'
 PROXY_SHEET = 'proxy'
 ACTIONS = ['click', 'clear', 'sendkeys', 'submit', 'select', 'readonly_input']
 
@@ -275,7 +276,7 @@ class Config:
         Config.location = conf['location'] if 'location' in conf else None
         Config.delay_submit = conf['delay_submit'] if 'delay_submit' in conf else 5
         Config.wait_before_if = conf['if_wait'] if 'if_wait' in conf else 3
-        Config.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else 'random-agent-spoofer.xpi'
+        Config.random_agent = conf['random_agent_spoofer'] if 'random_agent_spoofer' in conf else None
         Config.proxytool = conf['proxytool'] if 'proxytool' in conf else None
         Config.ipchecker = conf['ipchecker'] if 'ipchecker' in conf else 'http://173.230.146.56/ip/getip.php'
         Config.proxy = conf['proxy'] if 'proxy' in conf else True
@@ -299,7 +300,7 @@ class Proxy:
     """代理类，用于检查IP，切换代理"""
     proxies = None
     num_proxy = None
-    num_uesd = None
+    num_used = None
     country = None
     state = None
 
@@ -310,6 +311,10 @@ class Proxy:
 
         self._proxy_log = os.path.abspath(PROXY_SHEET + '.log')
         self._used_nums()
+
+        p = self.proxies[self.num_used]
+        self.country = p['country']
+        self.state = p['state']
 
     def change(self):
         """切换下一个代理"""
@@ -324,14 +329,17 @@ class Proxy:
                 self.call_api()
         else:
             logger.error(u'[Error] 未配置proxytool路径，无法切换代理')
-            raise ProxyToolConfigException()  # todo: 遇到这种情况怎么办，如果未配置代理路径或者excel中没有可用代理
+            raise ProxyToolConfigException()
 
     def call_api(self):
         """调用切换代理API"""
         if CONFIG.proxy and CONFIG.proxytool:
             logger.info(u'[Info] 调用代理 country: {0} state: {1}'.format(self.country, self.state))
-            os.system(CONFIG.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
-            time.sleep(20)
+            try:
+                os.system(CONFIG.proxytool + ' -changeproxy/' + self.country + '/' + self.state)
+                time.sleep(20)
+            except:
+                logger.error(u'[Error] 调用代理API失败')
 
     def _used_nums(self):
         """检查执行了多少个代理行"""
@@ -459,10 +467,17 @@ def kill_proc():
 
 class Browser:
     """浏览器操作类"""
-    def __init__(self):
+    def __init__(self, proxy):
         self.driver = None
         kill_proc()
         self.error_pages = 0
+        self.proxy = proxy
+
+    def pick_a_ua(self):
+        with open(UA_FILE, 'rb') as f:
+            allf = f.readlines()
+            pick = random.choice(allf).strip()
+            return pick.split('@')
 
     def open(self):
         """ 根据config打开指定类型浏览器 """
@@ -473,17 +488,27 @@ class Browser:
                 if CONFIG.random_agent:
                     profile.add_extension(os.path.abspath(CONFIG.random_agent))
 
+                platform, ua = self.pick_a_ua()
+                logger.info(u'[Info] Platform: {}'.format(platform))
+                logger.info(u'[Info] UA: {}'.format(ua))
+                profile.set_preference('general.useragent.override', ua)
+                profile.set_preference('general.platform.override', platform)
+
                 self.driver = webdriver.Firefox(firefox_binary=binary, firefox_profile=profile)
                 logger.info(u'[Info] 打开浏览器  firefox')
                 self.driver.set_page_load_timeout(70)
                 return self
             except Exception as e:
                 logger.error(u'[Error] 打开firefox 浏览器失败')
-                raise  # todo 打开浏览器失败如何处理？？
+                raise
         elif CONFIG.browser == 'chrome':
             try:
                 option = webdriver.ChromeOptions()
                 option.binary_location = CONFIG.location
+
+                platform, ua = self.pick_a_ua()
+                logger.info(u'[Info] UA: {}'.format(ua))
+                option.add_argument('user-agent={}'.format(ua))
 
                 self.driver = webdriver.Chrome(executable_path='chromedriver.exe', chrome_options=option)
                 logger.info(u'[Info] 打开浏览器  chrome')
@@ -502,7 +527,7 @@ class Browser:
                 logger.error(u'[Error] 打开ie浏览器失败')
         else:
             logger.error(u'[Error] 不支持的浏览器类型')
-            os._exit(0)  # todo 浏览器类型不支持如何处理？？
+            os._exit(0)
 
     def get(self, url):
         """打开URL，成功则返回driver，否则刷新页面，继续尝试，两次失败则重新切一次当前行IP，一共切10次"""
@@ -512,18 +537,29 @@ class Browser:
                     self.driver.get(url)
                     if self.driver.current_url:
                         if self.error_page():
-                            self.refresh('force')
-                            if self.error_page():
-                                Proxy().call_api()
+                            if j == 0:  # 第一次error page则刷新，第二次则切代理
+                                self.refresh('force')
+                                continue
+                            else:
+                                self.quit()
+                                time.sleep(2)
+                                self.proxy.call_api()
+                                time.sleep(5)
+                                self.open()
                                 break
-                        logger.info(u'[Info] 打开URL  {}'.format(url))
-                        return self.driver
+                        else:
+                            logger.info(u'[Info] 打开URL  {}'.format(url))
+                            return self.driver
                     else:
                         raise TimeoutException
                 except:
                     logger.error(u'[Error] 打开URL失败')
                     if j != 0:
-                        Proxy().call_api()
+                        self.quit()
+                        time.sleep(2)
+                        self.proxy.call_api()
+                        time.sleep(5)
+                        self.open()
                         break
 
     def quit(self):
@@ -549,18 +585,17 @@ class Browser:
 
     def error_page(self):
         # 如果是Error Page，刷新一次，若仍失败，退出
-        for i in range(1, 3):
-            try:
+        try:
+            if Config.browser == 'firefox':
                 WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
-                self.error_pages = i
-                logger.error(u'[Error] 得到Error Page')
-                if self.error_pages < 2:
-                    time.sleep(3)
-                    self.refresh()
-            except TimeoutException:
-                break
-        if self.error_pages == 2:
-            logger.error(u'[Error] 两次得到Error Page，任务失败')
+            elif Config.browser == 'chrome':
+                WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'main-frame-error')))
+            else:
+                WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'contentContainer')))
+            logger.error(u'[Error] 得到Error Page')
+            return True
+        except TimeoutException:
+            return False
 
 
 class Element:
@@ -632,21 +667,30 @@ class Page:
         # 如果是Error Page，刷新一次，若仍失败，退出
         for i in range(1, 3):
             try:
-                WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
+                if Config.browser == 'firefox':
+                    WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'errorPageContainer')))
+                elif Config.browser == 'chrome':
+                    WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'main-frame-error')))
+                else:
+                    WebDriverWait(self.driver, 3, 0.5).until(visibility_of_element_located(('id', 'contentContainer')))
                 self.error_pages = i
                 logger.error(u'[Error] 得到Error Page')
                 if self.error_pages < 2:
                     time.sleep(3)
                     self.refresh('force')
             except TimeoutException:
-                break
+                return False
         if self.error_pages == 2:
             logger.error(u'[Error] 两次得到Error Page，任务失败')
+            return True
 
     def do(self):
+        skip = False
         for element in self.elements:
             if isinstance(element, dict):  # 特殊命令
                 if 'if' in element:
+                    skip = False
+                    current_handle = self.driver.current_window_handle
                     time.sleep(CONFIG.wait_before_if)
                     WebDriverWait(self.driver, 30, 0.5).until(presence_of_element_located(('tag name', 'html')))
                     found_if = False
@@ -672,18 +716,30 @@ class Page:
                                     return True
                                 elif element['action'] == 'go':
                                     logger.info(u'[Info] 继续执行')
+                                elif element['action'] == 'skip':
+                                    skip = True
                                 else:
                                     logger.error(u'[Error] 未知动作')
                     if not found_if:
                         logger.info(u'[Info] 未发现匹配网址')
-                        if 'action' in element:
-                            if element['action'] == 'close':
+                        if 'else' in element:
+                            if element['else'] == 'go':
                                 logger.info(u'[Info] 继续执行')
-                            elif element['action'] == 'go':
+                                self.driver.switch_to.window(current_handle)
+                            elif element['else'] == 'close':
                                 logger.info(u'[Info] 关闭浏览器')
                                 return True
+                            elif element['else'] == 'skip':
+                                skip = True
                             else:
                                 logger.error(u'[Error] 未知动作')
+                        elif 'action' in element:
+                            if element['action'] == 'close':
+                                logger.info(u'[Info] 继续执行')
+                                self.driver.switch_to.window(current_handle)
+                            else:
+                                logger.info(u'[Info] 关闭浏览器')
+                                return True
 
                 elif 'wait' in element:
                     if isinstance(element['wait'], list):
@@ -694,12 +750,18 @@ class Page:
                     time.sleep(wait_time)
                 elif 'refresh' in element:
                     self.refresh(element['refresh'])
+                elif 'switch' in element:
+                    if element['switch'] == 'default_content':
+                        self.driver.switch_to.default_content()
+                    else:
+                        self.driver.switch_to.frame(element['switch'])
             else:  # 标准元素
-                try:
-                    Element(self.driver, element, self.params).do_its_work()
-                except:
-                    logger.warning(u'[Warning] 元素执行失败，跳过该元素')
-                time.sleep(1)
+                if not skip:
+                    try:
+                        Element(self.driver, element, self.params).do_its_work()
+                    except:
+                        logger.warning(u'[Warning] 元素执行失败，跳过该元素')
+                    time.sleep(1)
 
 
 class NoMoreTaskException(Exception):
@@ -707,13 +769,15 @@ class NoMoreTaskException(Exception):
 
 
 class Task:
-    def __init__(self, task):
+    def __init__(self, task, proxy):
         self.task = copy.copy(task)
         self.url = self.task.pop(0)['url']
         self.sheet = self.task.pop(0)['sheet']
         self.log = os.path.abspath(os.curdir) + '\\' + self.sheet + '.log'
         self.ran_nums = 0
         self._ran_nums()
+
+        self.proxy = proxy
 
         taskdata = ExcelReader(sheet=self.sheet)
         self.nums = taskdata.nums
@@ -738,14 +802,17 @@ class Task:
         logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 开始执行'.format(self.sheet, self.ran_nums + 2))
         logger.info(u'[Info] ======  任务开始  =======')
 
-        self.browser = Browser()
+        self.browser = Browser(self.proxy)
         self.driver = self.browser.open().get(self.url)
         params = self.data[self.ran_nums]
         return params
 
     def _end(self):
-        # logger.info(u'[Info] 当前网页URL： {}'.format(self.driver.current_url))
-        self.browser.quit()
+        try:
+            logger.info(u'[Info] 当前网页URL： {}'.format(self.driver.current_url))
+            self.browser.quit()
+        except:
+            pass
         logger.info(u'[Info] ======  任务结束  =======')
         logger.info(u'[Info] Sheet: "{0}"  Line: "{1}" 执行结束\n'.format(self.sheet, self.ran_nums + 2))
 
@@ -756,8 +823,10 @@ class Task:
 
             for elements in self.task:
                 p = Page(self.driver, elements['elements'], params)
-                p.error_page()
-                success = p.do()
+                if p.error_page():
+                    break
+                else:
+                    success = p.do()
 
                 # 程序执行完第一个elements，则标记为已执行，写入日志
                 if self.first_page:
@@ -792,10 +861,9 @@ def main():
             proxy_log = 0  # 记代理日志的标记，当执行完所有task中第一个page后写入proxy_log
             for task in TASKS:
                 try:
-                    t = Task(task)
-                except Exception as e:
+                    t = Task(task, p)
+                except:
                     logger.error(u'[Error] 初始化任务出错，请检查配置或数据文件，确认填写无误并且变量名与列名对应')
-                    # logger.exception(e)
                 else:
                     try:
                         proxy_log = t.run(proxy_log)
@@ -805,8 +873,11 @@ def main():
                     except Exception as e:
                         logger.error(u'[Error] 执行任务出错，请检查配置与页面是否对应')
                         # logger.exception(e)
-                        logger.info(u'[Info] 当前网页URL： {}'.format(t.url))
-                        t.browser.quit()
+                        try:
+                            logger.info(u'[Info] 当前网页URL： {}'.format(t.browser.driver.current_url))
+                            t.browser.quit()
+                        except:
+                            pass  # 尝试获取当前URL，关闭浏览器；如果浏览器已被关闭，则pass掉异常
         if finished:
             logger.info(u'[Info] 所有任务执行结束，请处理数据后重新启动程序\n')
             break
